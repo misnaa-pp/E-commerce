@@ -1,0 +1,379 @@
+{
+  "products": [
+    {
+      "id": "1",
+      "name": "Top + wide pant outfit",
+      "category": "Girls",
+      "price": 799,
+      "originalPrice": 999,
+      "description": "Young girl stylish & sweet bow decor top + wide leg pants outfit.",
+      "image": "https://i.pinimg.com/1200x/fe/ba/dc/febadc3d7ac615090b58bd8d5045f981.jpg",
+      "stock": 10,
+      "sizes": [
+        "2Y",
+        "3Y",
+        "4Y",
+        "5Y"
+      ],
+      "rating": 4.5
+    },
+    {
+      "id": "2",
+      "name": "Floral Embroidery top and pant",
+      "category": "Girls",
+      "price": 599,
+      "originalPrice": 749,
+      "description": "Young Girl Floral Embroidery Short Sleeve Top And Straight Leg Pants Set",
+      "image": "https://i.pinimg.com/736x/e2/de/d1/e2ded1d0527404dd6e68c467faab837c.jpg",
+      "stock": 15,
+      "sizes": [
+        "3Y",
+        "4Y",
+        "5Y",
+        "6Y"
+      ],
+      "rating": 4.3
+    },
+    {
+      "id": "3",
+      "name": "boys Outfit",
+      "category": "Boys",
+      "price": 999,
+      "originalPrice": 1200,
+      "description": "cute small boys outfit",
+      "image": "https://i.pinimg.com/736x/41/5a/9f/415a9fe1e2b3e96432e58f6f380a070f.jpg",
+      "stock": 10,
+      "sizes": [
+        "2Y",
+        "3Y",
+        "4Y",
+        "5Y"
+      ],
+      "rating": 4.5
+    },
+    {
+      "id": "4",
+      "name": "Summer Casual Set",
+      "category": "Girls",
+      "price": 799,
+      "originalPrice": 999,
+      "description": "Short Sleeve Lapel Button-Up Top + Elastic Waist Shorts,",
+      "image": "https://i.pinimg.com/1200x/c3/98/d0/c398d0c72be6972d0f0c3c8b6c7f5760.jpg",
+      "stock": 10,
+      "sizes": [
+        "2Y",
+        "3Y",
+        "4Y",
+        "5Y"
+      ],
+      "rating": 4.5
+    },
+    {
+      "id": "5",
+      "name": "boys Outfit",
+      "category": "Boys",
+      "price": 749,
+      "originalPrice": 949,
+      "description": "Boys casual outfit",
+      "image": "https://i.pinimg.com/1200x/81/f4/2c/81f42ceb7efb423fd59cf6c164fdad8b.jpg",
+      "stock": 8,
+      "sizes": [
+        "2Y",
+        "3Y",
+        "4Y",
+        "5Y"
+      ],
+      "rating": 4.4
+    },
+    
+    {
+      "id": "6",
+      "name": "Girls Jumpsuit",
+      "category": "Girls",
+      "price": 899,
+      "originalPrice": 999,
+      "description": "Toddler Girls Striped Ruffle Trim Belted Jumpsuit",
+      "image": "https://i.pinimg.com/1200x/d3/b3/03/d3b30383d5a6ebb88a890990f14e3bee.jpg",
+      "stock": 8,
+      "sizes": [
+        "2Y",
+        "3Y",
+        "4Y",
+        "5Y"
+      ],
+      "rating": 4.2
+    },
+    {
+      "id": "7",
+      "name": "Summer Outfit for Girls",
+      "category": "Girls",
+      "price": 749,
+      "originalPrice": 799,
+      "description": "Stylish Blue Striped Kids Co-Ord Set ",
+      "image": "https://i.pinimg.com/736x/74/b3/7f/74b37f73fd964ae6cae3085fa130f021.jpg",
+      "stock": 12,
+      "sizes": [
+        "2Y",
+        "3Y",
+        "4Y",
+        "5Y"
+      ],
+      "rating": 4.0
+    },
+    {
+      "id": "8",
+      "name": "Casual Summer Outfit ",
+      "category": "Girls",
+      "price": 499,
+      "originalPrice": 599,
+      "description": "Girls Yellow Cotton Shirt with White Wide-Leg Palazzo Pants Set ",
+      "image": "https://i.pinimg.com/736x/75/f8/3e/75f83e47d86c5f46f15c30b7603250d9.jpg",
+      "stock": 6,
+      "sizes": [
+        "2Y",
+        "3Y",
+        "4Y",
+        "5Y"
+      ],
+      "rating": 4.5
+    },
+    {
+      "id": "9",
+      "name": "Summer Outfit for Girls",
+      "category": "Girls",
+      "price": 700,
+      "originalPrice": 949,
+      "description": "Floral girl dress ",
+      "image": "https://i.pinimg.com/736x/20/57/cb/2057cb4134f6813b0efc511ffc5ec55d.jpg",
+      "stock": 7,
+      "sizes": [
+        "2Y",
+        "3Y",
+        "4Y",
+        "5Y"
+      ],
+      "rating": 4.5
+    },
+    {
+      "id": "10",
+      "name": "boys T-shirt",
+      "category": "Boys",
+      "price": 499,
+      "originalPrice": 699,
+      "description": "Tween Boy's Striped Round Neck Short Sleeve T-Shirt And Shorts Set.",
+      "image": "https://i.pinimg.com/1200x/40/17/b7/4017b7df7126e58ee3f12ee92280771e.jpg",
+      "stock": 7,
+      "sizes": [
+        "2Y",
+        "3Y",
+        "4Y",
+        "5Y"
+      ],
+      "rating": 3.9
+    },
+    {
+      "id": "11",
+      "name": "boys outfit",
+      "category": "Boys",
+      "price": 999,
+      "originalPrice": 1199,
+      "description": "Fresh, cool, and effortlessly stylish! .",
+      "image": "https://i.pinimg.com/736x/0a/a9/6e/0aa96ef1be6d6dbce6442f36d0b4a321.jpg",
+      "stock": 10,
+      "sizes": [
+        "2Y",
+        "3Y",
+        "4Y",
+        "5Y"
+      ],
+      "rating": 4.5
+    },
+    {
+      "id": "12",
+      "name": "Summer Outfit for Girls",
+      "category": "Girls",
+      "price": 799,
+      "originalPrice": 999,
+      "description": "Cream Ruffle Co-Ord Set for Girls",
+      "image": "https://i.pinimg.com/736x/5e/2d/0a/5e2d0ab9653e0d8c31184ff2da77ea50.jpg",
+      "stock": 9,
+      "sizes": [
+        "2Y",
+        "3Y",
+        "4Y",
+        "5Y"
+      ],
+      "rating": 4.5
+    },
+    {
+      "id": "13",
+      "name": "Kids outfit",
+      "category": "Kids",
+      "price": 699,
+      "originalPrice": 899,
+      "description": "Long Sleeve Unisex Infant Bodysuit",
+      "image": "https://i.pinimg.com/1200x/01/6f/68/016f686e66ba0998ce9212cfdad89f3e.jpg",
+      "stock": 10,
+      "sizes": [
+        "1Y",
+        "2Y"
+      ],
+      "rating": 4.5
+    },
+    {
+      "id": "14",
+      "name": "Kids outfit",
+      "category": "Kids",
+      "price": 799,
+      "originalPrice": 999,
+      "description": "adorable baby romper",
+      "image": "https://i.pinimg.com/1200x/a2/33/47/a233475dc187bcc68c6b3e7125334d5a.jpg",
+      "stock": 10,
+      "sizes": [
+        "1Y",
+        "2Y"
+      ],
+      "rating": 4.5
+    },
+    {
+      "id": "15",
+      "name": "boys outfit",
+      "category": "Boys",
+      "price": 699,
+      "originalPrice": 899,
+      "description": "Waffle Knit Button-Down Short Set",
+      "image": "https://i.pinimg.com/1200x/f3/8e/4c/f38e4c0aa17279070ddd04f1f7e41324.jpg",
+      "stock": 12,
+      "sizes": [
+        "2Y",
+        "3Y",
+        "4Y",
+        "5Y"
+      ],
+      "rating": 4.3
+    },
+    {
+      "id": "16",
+      "name": "boys casual outfit",
+      "category": "Boys",
+      "price": 799,
+      "originalPrice": 999,
+      "description": "Tween Boys Casual Loose Fit",
+      "image": "https://i.pinimg.com/736x/c8/73/25/c87325c735f6e64214e9bd616b2a7814.jpg",
+      "stock": 10,
+      "sizes": [
+        "2Y",
+        "3Y",
+        "4Y",
+        "5Y"
+      ],
+      "rating": 4.5
+    },
+    {
+      "id": "17",
+      "name": "boys casual outfit",
+      "category": "Boys",
+      "price": 500,
+      "originalPrice": 699,
+      "description": "Single-Breasted Loose Casual Shirt",
+      "image": "https://i.pinimg.com/736x/8d/da/57/8dda57eb5db5c6777680ee5400f1d629.jpg",
+      "stock": 15,
+      "sizes": [
+        "2Y",
+        "3Y",
+        "4Y",
+        "5Y"
+      ],
+      "rating": 4.5
+    },
+    {
+      "id": "18",
+      "name": "Kids outfit",
+      "category": "Kids",
+      "price": 799,
+      "originalPrice": 999,
+      "description": "newborn girl outfits",
+      "image": "https://i.pinimg.com/736x/e0/85/5d/e0855d5e32cdeb3cca651f54419400eb.jpg",
+      "stock": 10,
+      "sizes": [
+        "1Y",
+        "2Y"
+      ],
+      "rating": 4.5
+    },
+    {
+      "id": "19",
+      "name": "boys casual outfit",
+      "category": "Boys",
+      "price": 799,
+      "originalPrice": 999,
+      "description": "Korean Style Black & White Abstract Shirt Set ",
+      "image": "https://i.pinimg.com/736x/64/c8/81/64c8817eee5d1d0f7b87ec5446ab3eaa.jpg",
+      "stock": 10,
+      "sizes": [
+        "2Y",
+        "3Y",
+        "4Y",
+        "5Y"
+      ],
+      "rating": 4.5
+    },
+    
+    {
+      "id": "20",
+      "name": "Kids outfit",
+      "category": "Kids",
+      "price": 749,
+      "originalPrice": 949,
+      "description": "Sleeveless Pocket Romper for Toddler Girls",
+      "image": "https://i.pinimg.com/1200x/21/05/cf/2105cf391418d67e56833bf76f5e58f6.jpg",
+      "stock": 10,
+      "sizes": [
+        "1Y",
+        "2Y"
+      ],
+      "rating": 4.2
+    },
+    {
+      "id": "21",
+      "name": "Kids outfit",
+      "category": "Kids",
+      "price": 700,
+      "originalPrice": 900,
+      "description": "Casual Polyester Jumpsuit for Boys,",
+      "image": "https://i.pinimg.com/736x/23/3c/3f/233c3f21f823bd766b36b72f16c7ac8a.jpg",
+      "stock": 8,
+      "sizes": [
+        "1Y",
+        "2Y"
+      ],
+      "rating": 4.4
+    },
+    {
+      "id": "22",
+      "name": "Elegant Neutral Kids Outfit",
+      "category": "Girls",
+      "price": 799,
+      "originalPrice": 999,
+      "description": " comfort, quality, and Korean-inspired minimalist design",
+      "image": "https://i.pinimg.com/1200x/36/e3/71/36e3711fa964482175f18fab819ae8c5.jpg",
+      "stock": 9,
+      "sizes": [
+        "2Y",
+        "3Y",
+        "4Y",
+        "5Y"
+      ],
+      "rating": 4.5
+    }
+  ],
+  "users": [
+    {
+      "name": "misna",
+      "email": "misna@gmail.com",
+      "password": "misna123",
+      "id": "T7wH48AQGmI"
+    }
+  ],
+  "orders": []
+}
