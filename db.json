@@ -85,7 +85,6 @@
       ],
       "rating": 4.4
     },
-    
     {
       "id": "6",
       "name": "Girls Jumpsuit",
@@ -118,7 +117,7 @@
         "4Y",
         "5Y"
       ],
-      "rating": 4.0
+      "rating": 4
     },
     {
       "id": "8",
@@ -170,23 +169,6 @@
         "5Y"
       ],
       "rating": 3.9
-    },
-    {
-      "id": "11",
-      "name": "boys outfit",
-      "category": "Boys",
-      "price": 999,
-      "originalPrice": 1199,
-      "description": "Fresh, cool, and effortlessly stylish! .",
-      "image": "https://i.pinimg.com/736x/0a/a9/6e/0aa96ef1be6d6dbce6442f36d0b4a321.jpg",
-      "stock": 10,
-      "sizes": [
-        "2Y",
-        "3Y",
-        "4Y",
-        "5Y"
-      ],
-      "rating": 4.5
     },
     {
       "id": "12",
@@ -318,7 +300,6 @@
       ],
       "rating": 4.5
     },
-    
     {
       "id": "20",
       "name": "Kids outfit",
@@ -375,5 +356,53 @@
       "id": "T7wH48AQGmI"
     }
   ],
-  "orders": []
+  "orders": [
+    {
+      "customer": {
+        "name": "misna",
+        "email": "misna@gmail.com",
+        "phone": "7012774733",
+        "address": "pothipurath house",
+        "city": "tirur",
+        "state": "kerala",
+        "pincode": "676101"
+      },
+      "paymentMethod": "cod",
+      "items": [
+        {
+          "id": "1",
+          "name": "Top + wide pant outfit",
+          "category": "Girls",
+          "price": 799,
+          "originalPrice": 999,
+          "description": "Young girl stylish & sweet bow decor top + wide leg pants outfit.",
+          "image": "https://i.pinimg.com/1200x/fe/ba/dc/febadc3d7ac615090b58bd8d5045f981.jpg",
+          "stock": 10,
+          "sizes": [
+            "2Y",
+            "3Y",
+            "4Y",
+            "5Y"
+          ],
+          "rating": 4.5,
+          "quantity": 1
+        }
+      ],
+      "subtotal": 799,
+      "shipping": 50,
+      "total": 849,
+      "status": "Pending",
+      "createdAt": "2026-08-27T04:24:23.413Z",
+      "id": "44ilc_ccKYw"
+    }
+  ],
+  "admins": [
+    {
+      "id": "1",
+      "name": "Misna",
+      "email": "admin@gmail.com",
+      "password": "admin123"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

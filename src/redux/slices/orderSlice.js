@@ -1,10 +1,17 @@
 import {createAsyncThunk,createSlice,} from "@reduxjs/toolkit";
-import {createOrder,getOrders,} from "../../services/orderService";
+import {createOrder,getOrders,getOrderById} from "../../services/orderService";
 
 export const fetchOrders = createAsyncThunk(
   "orders/fetchOrders",
   async () => {
     return await getOrders();
+  }
+);
+
+export const fetchOrderById = createAsyncThunk(
+  "orders/fetchOrderById",
+  async (id) => {
+    return await getOrderById(id);
   }
 );
 
@@ -20,6 +27,7 @@ const orderSlice = createSlice({
 
   initialState: {
    orders: [],
+   selectedOrder: null,
    loading: false,
    error: null,
   },
@@ -43,15 +51,30 @@ const orderSlice = createSlice({
         (state, action) => {
           state.loading = false;
           state.orders = action.payload;
-        }
-      )
+        })
 
       .addCase(fetchOrders.rejected,
         (state, action) => {
           state.loading = false;
           state.error = action.payload;
-        }
-      )
+        })
+
+      .addCase(fetchOrderById.pending,(state) => {
+        state.loading = true;
+        state.error = null;
+      })
+
+    .addCase(fetchOrderById.fulfilled,(state, action) => {
+        state.loading = false;
+        state.selectedOrder = action.payload;
+      })
+
+    .addCase(
+      fetchOrderById.rejected,
+      (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
 
       .addCase(placeOrder.pending, (state) => {
         state.loading = true;
@@ -63,16 +86,14 @@ const orderSlice = createSlice({
         (state, action) => {
           state.loading = false;
           state.orders.unshift(action.payload);
-        }
-      )
+        })
 
       .addCase(
         placeOrder.rejected,
         (state, action) => {
           state.loading = false;
           state.error = action.payload;
-        }
-      );
+        });
   },
 });
 

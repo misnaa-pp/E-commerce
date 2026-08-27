@@ -41,7 +41,7 @@ function Navbar() {
             <>
               <button
                 onClick={() => dispatch(logout())}
-                className="rounded-full border border-[#737466] px-5 py-2.5 font-serif text-sm text-[#5b5a4d] transition hover:bg-[#737466] hover:text-[#f8f3ec]"
+                className="rounded-full border border-[#737466] px-5 py-2.5 font-serif text-sm text-[#5b5a4d] transition hover:bg-[#4e2d19] hover:text-[#f8f3ec]"
               >
                 Logout
               </button>
@@ -49,7 +49,7 @@ function Navbar() {
           ) : (
             <Link
               to="/login"
-              className="rounded-full bg-[#737466] px-6 py-3 font-serif text-[15px] text-[#f8f3ec] transition hover:bg-[#5d5e51]"
+              className="rounded-full bg-[#6b3f22] px-6 py-3 font-serif text-[15px] text-[#f8f3ec] transition hover:bg-[#4e2d19]"
             >
               Login
             </Link>
