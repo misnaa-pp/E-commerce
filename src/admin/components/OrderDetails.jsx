@@ -1,11 +1,11 @@
-function OrderDetails({ order,onClose,}) {
+function OrderDetails({ order,orderNumber,onClose,}) {
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center p-6 border-b">
           <div>
             <h2 className="text-xl font-semibold text-[#5a3e2b]">
-              Order #{order.id}
+              Order #{orderNumber}
             </h2>
 
             <p className="text-sm text-gray-500">
@@ -51,11 +51,7 @@ function OrderDetails({ order,onClose,}) {
               (item, index) => (
 
                 <div
-                  key={
-                    item.productId ||
-                    item.id ||
-                    index
-                  }
+                  key={item.id }
                   className="flex items-center gap-4">
 
                   {item.image && (

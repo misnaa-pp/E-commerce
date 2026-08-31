@@ -49,15 +49,9 @@ function AdminProducts() {
     products.length / productsPerPage
   );
 
-  const startIndex =
-    (currentPage - 1) *
-    productsPerPage;
+  const startIndex = (currentPage - 1) * productsPerPage;
 
-  const currentProducts =
-    products.slice(
-      startIndex,
-      startIndex + productsPerPage
-    );
+  const currentProducts = products.slice( startIndex, startIndex + productsPerPage);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);

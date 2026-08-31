@@ -42,7 +42,7 @@ function AdminSidebar() {
             className={({ isActive }) =>
               `block px-4 py-3 rounded-lg transition ${
                 isActive
-                  ? "bg-[#5a3e2b] text-[#5a3e2b]"
+                  ? "bg-[#6b4b35] text-[#5a3e2b]"
                   : "hover:bg-[#6b4b35] "
               }`
             }

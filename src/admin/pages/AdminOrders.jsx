@@ -14,6 +14,7 @@ function AdminOrders() {
   } = useSelector((state) => state.orders);
 
   const [showDetails, setShowDetails] = useState(false);
+  const [selectedOrderNumber, setSelectedOrderNumber] = useState(null);
 
   useEffect(() => {
     if (orders.length === 0) {
@@ -21,17 +22,11 @@ function AdminOrders() {
     }
   }, [dispatch, orders.length]);
 
-  const handleViewDetails = async (id) => {
-    try {
-      await dispatch(
-        fetchOrderById(id)
-      ).unwrap();
-
-      setShowDetails(true);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+ const handleViewDetails = (orderId, orderNumber) => {
+  dispatch(fetchOrderById(orderId));
+  setSelectedOrderNumber(orderNumber);
+  setShowDetails(true);
+};
 
   if (
     loading &&
@@ -118,14 +113,14 @@ function AdminOrders() {
             </thead>
             <tbody>
 
-              {orders.map((order) => (
+              {orders.map((order, index) => (
 
                 <tr
                   key={order.id}
                   className="border-b">
 
                   <td className="p-4 font-medium">
-                    #{order.id}
+                    #{index + 1}
                   </td>
 
                   <td className="p-4">
@@ -162,7 +157,7 @@ function AdminOrders() {
                     <button
                       onClick={() =>
                         handleViewDetails(
-                          order.id
+                          order.id, index + 1
                         )
                       }
                       className="px-4 py-2 rounded-lg bg-[#5a3e2b] text-white" >
@@ -181,6 +176,7 @@ function AdminOrders() {
         selectedOrder && (
           <OrderDetails
             order={selectedOrder}
+            orderNumber={selectedOrderNumber}
             onClose={() =>
               setShowDetails(false)
             }

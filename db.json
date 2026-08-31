@@ -1,21 +1,24 @@
 {
   "products": [
     {
-      "id": "1",
       "name": "Top + wide pant outfit",
       "category": "Girls",
       "price": 799,
       "originalPrice": 999,
+      "discount": 0,
       "description": "Young girl stylish & sweet bow decor top + wide leg pants outfit.",
-      "image": "https://i.pinimg.com/1200x/fe/ba/dc/febadc3d7ac615090b58bd8d5045f981.jpg",
-      "stock": 10,
+      "image": "https://i.pinimg.com/736x/81/db/f0/81dbf034f72f42f68bbe39d11c1ab981.jpg",
+      "stock": 12,
+      "rating": 4.5,
       "sizes": [
         "2Y",
         "3Y",
         "4Y",
         "5Y"
       ],
-      "rating": 4.5
+      "colors": [],
+      "images": [],
+      "id": "1"
     },
     {
       "id": "2",
@@ -403,6 +406,5 @@
       "email": "admin@gmail.com",
       "password": "admin123"
     }
-  ],
-  "$schema": "./node_modules/json-server/schema.json"
+  ]
 }
