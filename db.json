@@ -356,7 +356,8 @@
       "name": "misna",
       "email": "misna@gmail.com",
       "password": "misna123",
-      "id": "T7wH48AQGmI"
+      "id": "T7wH48AQGmI",
+      "isBlocked": false
     }
   ],
   "orders": [

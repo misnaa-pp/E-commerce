@@ -177,7 +177,7 @@ function Home() {
 
         </div>
 
-        <div className="h-[400px] lg:h-[440px]">
+        <div className="h-[400px] lg:h-[460px]">
 
           <img
             src={aboutImage}
