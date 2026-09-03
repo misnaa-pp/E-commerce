@@ -53,7 +53,7 @@ function Cart() {
                   className="flex gap-5 border-b border-[#e5ded4] py-6">
                   <div className="h-32 w-24 shrink-0 overflow-hidden bg-[#eee6dc] sm:h-40 sm:w-32">
 
-                    <img src={item.images} alt={item.title} className="h-full w-full object-cover"/>
+                    <img src={item.images || item.image} alt={item.title} className="h-full w-full object-cover"/>
                   </div>
 
                   <div className="flex flex-1 flex-col justify-between">

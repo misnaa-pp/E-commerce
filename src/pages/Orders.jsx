@@ -113,7 +113,7 @@ function Orders() {
                     >
                       <div className="h-24 w-20 shrink-0 overflow-hidden bg-[#eee6dc] sm:h-28 sm:w-24">
                         <img
-                          src={item.image}
+                          src={item.images || item.image}
                           alt={item.title || item.name}
                           className="h-full w-full object-cover"
                         />
