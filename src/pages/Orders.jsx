@@ -155,12 +155,6 @@ function Orders() {
                     </span>
                   </div>
 
-                  <Link
-                    to={`/orders/${order.id}`}
-                    className="w-fit border-b border-[#6b3f22] pb-1 text-xs tracking-wider text-[#6b3f22] transition hover:text-[#3d2415]"
-                  >
-                    VIEW ORDER →
-                  </Link>
                 </div>
               </div>
             ))}

@@ -2,8 +2,9 @@ import React from 'react';
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import toast from "react-hot-toast";
 
-import { getUsers } from "../services/userService";
+import { getUsers } from "../services/UserService";
 import { login } from "../redux/slices/authSlice";
 
 function Login() {
@@ -29,7 +30,6 @@ function Login() {
 
     try {
       setError("");
-
       const users = await getUsers();
 
       const user = users.find(
@@ -39,15 +39,21 @@ function Login() {
       );
 
       if (!user) {
-        setError("Invalid email or password");
+        toast.error("Invalid email or password");
+        return;
+      }
+
+      if (user.isBlocked) {
+        toast.error( "Your account has been blocked. Please contact the administrator.");
         return;
       }
 
       dispatch(login(user));
 
       navigate("/");
+
     } catch (error) {
-      setError("Login failed");
+      toast.error("Login failed");
     }
   };
 
@@ -57,40 +63,40 @@ function Login() {
         <div className="mb-9 text-center">
           <h1 className="font-serif text-4xl text-[#4c4b3f]">Please Login</h1>
         </div>
-        
-      <form onSubmit={handleSubmit}  className="space-y-5">
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          className="h-16 w-full rounded-md border border-[#d8d3cc] bg-white px-5 font-serif text-lg text-[#4c4b3f] outline-none transition placeholder:text-[#7d897f] focus:border-[#737466] focus:ring-1 focus:ring-[#737466]"
-          required
-        />
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          className="h-16 w-full rounded-md border border-[#d8d3cc] bg-white px-5 font-serif text-lg text-[#4c4b3f] outline-none transition placeholder:text-[#7d897f] focus:border-[#737466] focus:ring-1 focus:ring-[#737466]"
-          required
-        />
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            className="h-16 w-full rounded-md border border-[#d8d3cc] bg-white px-5 font-serif text-lg text-[#4c4b3f] outline-none transition placeholder:text-[#7d897f] focus:border-[#737466] focus:ring-1 focus:ring-[#737466]"
+            required
+          />
 
-        {error && ( <p className="text-center text-sm text-red-700">{error}</p>)}
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+            className="h-16 w-full rounded-md border border-[#d8d3cc] bg-white px-5 font-serif text-lg text-[#4c4b3f] outline-none transition placeholder:text-[#7d897f] focus:border-[#737466] focus:ring-1 focus:ring-[#737466]"
+            required
+          />
 
-        <button type="submit" className="h-16 w-full rounded-md bg-[#6b3f22] font-serif text-xl text-white transition duration-300 hover:bg-[#4e2d19]"
+          {error && (<p className="text-center text-sm text-red-700">{error}</p>)}
+
+          <button type="submit" className="h-16 w-full rounded-md bg-[#6b3f22] font-serif text-xl text-white transition duration-300 hover:bg-[#4e2d19]"
           >Login</button>
-      </form>
+        </form>
 
-      <div className="mt-8 border-t border-[#e5ded4] pt-6 text-center">
-        <p className="text-sm text-[#858075]">
-        Don't have an account? <Link to="/register" 
-        className="mt-1 inline-block font-serif text-sm text-[#5b5a4d] underline underline-offset-4 transition hover:text-[#29291f]">Register</Link>
-        </p>
-      </div>
+        <div className="mt-8 border-t border-[#e5ded4] pt-6 text-center">
+          <p className="text-sm text-[#858075]">
+            Don't have an account? <Link to="/register"
+              className="mt-1 inline-block font-serif text-sm text-[#5b5a4d] underline underline-offset-4 transition hover:text-[#29291f]">Register</Link>
+          </p>
+        </div>
 
       </div>
     </div>

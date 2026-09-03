@@ -1,4 +1,5 @@
 function OrderDetails({ order,orderNumber,onClose,}) {
+  
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">

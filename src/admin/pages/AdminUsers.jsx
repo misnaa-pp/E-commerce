@@ -1,11 +1,14 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUsers, updateUser,} from "../../redux/slices/userSlice";
+import { fetchUsers, updateUser, } from "../../redux/slices/userSlice";
+import toast from "react-hot-toast";
 
 function AdminUsers() {
   const dispatch = useDispatch();
 
-  const { users, loading, error,} = useSelector((state) => state.users);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const { users, loading, error} = useSelector((state) => state.users);
 
   useEffect(() => {
     if (users.length === 0) {
@@ -13,20 +16,36 @@ function AdminUsers() {
     }
   }, [dispatch, users.length]);
 
+  const filteredUsers = users.filter((user) => {
+    const search = searchTerm.toLowerCase();
+
+    return (
+      user.name?.toLowerCase().includes(search) ||
+      user.email?.toLowerCase().includes(search)
+    );
+  });
+
   const handleToggleBlock = async (user) => {
-    try {
-      await dispatch(
-        updateUser({
-          id: user.id,
-          userData: {
-            isBlocked: !user.isBlocked,
-          },
-        })
-      ).unwrap();
-    } catch (error) {
-      console.error(error);
+  try {
+    await dispatch(
+      updateUser({
+        id: user.id,
+        userData: {
+          isBlocked: !user.isBlocked,
+        },
+      })
+    ).unwrap();
+
+    if (user.isBlocked) {
+      toast.success("User unblocked successfully!");
+    } else {
+      toast.success("User blocked successfully!");
     }
-  };
+  } catch (error) {
+    console.error(error);
+    toast.error("Failed to update user status");
+  }
+};
 
   if (
     loading &&
@@ -59,28 +78,43 @@ function AdminUsers() {
   return (
     <div>
 
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-[#5a3e2b]">
-          Users
-        </h1>
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
 
-        <p className="text-gray-500 mt-1">
-          Manage registered customers
-        </p>
-      </div>
+  <div>
+    <h1 className="text-2xl font-semibold text-[#5a3e2b]">
+      Users
+    </h1>
 
-      {users.length === 0 ? (
-        <div className="bg-white rounded-xl shadow p-10 text-center">
+    <p className="text-gray-500 mt-1">
+      Manage registered customers
+    </p>
+  </div>
 
-          <h2 className="text-xl font-semibold">
-            No users found
-          </h2>
+  <input
+    type="text"
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+    placeholder="Search users..."
+    className="w-full md:w-72 px-4 py-3 border rounded-lg outline-none focus:ring-1 focus:ring-[#5a3e2b]"
+  />
 
-          <p className="text-gray-500 mt-2">
-            There are no registered users yet.
-          </p>
+</div>
+      {filteredUsers.length === 0 ? (
+  <div className="bg-white rounded-xl shadow p-10 text-center">
 
-        </div>
+    <h2 className="text-xl font-semibold">
+      {searchTerm
+        ? "No users found"
+        : "No users available"}
+    </h2>
+
+    <p className="text-gray-500 mt-2">
+      {searchTerm
+        ? "Try searching with another name or email."
+        : "There are no registered users yet."}
+    </p>
+
+  </div>
       ) : (
 
         <div className="overflow-x-auto bg-white rounded-xl shadow">
@@ -110,7 +144,7 @@ function AdminUsers() {
             </thead>
             <tbody>
 
-              {users.map((user) => (
+              {filteredUsers.map((user) => (
 
                 <tr
                   key={user.id}
@@ -154,16 +188,16 @@ function AdminUsers() {
                       onClick={() =>
                         handleToggleBlock(user)
                       }
-                      className={`px-4 py-2 rounded-lg ${
-                        user.isBlocked
+                      className={`px-4 py-2 rounded-lg ${user.isBlocked
                           ? "bg-green-100 text-green-700"
                           : "bg-red-100 text-red-600"
-                      }`}>
+                        }`}>
                       {user.isBlocked
                         ? "Unblock"
                         : "Block"}
                     </button>
                   </td>
+
                 </tr>
               ))}
             </tbody>

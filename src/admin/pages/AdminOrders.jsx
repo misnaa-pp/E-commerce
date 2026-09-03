@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchOrders, fetchOrderById,} from "../../redux/slices/orderSlice";
+import { fetchOrders, fetchOrderById, } from "../../redux/slices/orderSlice";
 import OrderDetails from "../components/OrderDetails";
 
 function AdminOrders() {
@@ -15,6 +15,7 @@ function AdminOrders() {
 
   const [showDetails, setShowDetails] = useState(false);
   const [selectedOrderNumber, setSelectedOrderNumber] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     if (orders.length === 0) {
@@ -22,15 +23,37 @@ function AdminOrders() {
     }
   }, [dispatch, orders.length]);
 
- const handleViewDetails = (orderId, orderNumber) => {
-  dispatch(fetchOrderById(orderId));
-  setSelectedOrderNumber(orderNumber);
-  setShowDetails(true);
-};
+  const filteredOrders = orders.filter((order) => {
+    const search = searchTerm.toLowerCase();
+
+    const orderId = String(order.id || "").toLowerCase();
+    const customerName = String(
+      order.customer?.name || ""
+    ).toLowerCase();
+    const customerEmail = String(
+      order.customer?.email || ""
+    ).toLowerCase();
+    const status = String(
+      order.status || ""
+    ).toLowerCase();
+
+    return (
+      orderId.includes(search) ||
+      customerName.includes(search) ||
+      customerEmail.includes(search) ||
+      status.includes(search)
+    );
+  });
+
+  const handleViewDetails = (orderId, orderNumber) => {
+    dispatch(fetchOrderById(orderId));
+    setSelectedOrderNumber(orderNumber);
+    setShowDetails(true);
+  };
 
   if (
     loading &&
-    orders.length === 0
+    filteredOrders.length === 0
   ) {
     return (
       <div className="flex justify-center py-20">
@@ -41,7 +64,7 @@ function AdminOrders() {
 
   if (
     error &&
-    orders.length === 0
+    filteredOrders.length === 0
   ) {
     return (
       <div>
@@ -59,25 +82,40 @@ function AdminOrders() {
   return (
     <div>
 
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-[#5a3e2b]">
-          Orders
-        </h1>
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
 
-        <p className="text-gray-500 mt-1">
-          Manage customer orders
-        </p>
+        <div>
+          <h1 className="text-2xl font-semibold text-[#5a3e2b]">
+            Orders
+          </h1>
+
+          <p className="text-gray-500 mt-1">
+            Manage customer orders
+          </p>
+        </div>
+
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search orders..."
+          className="w-full md:w-72 px-4 py-3 border rounded-lg outline-none focus:ring-1 focus:ring-[#5a3e2b]"
+        />
+
       </div>
-
-      {orders.length === 0 ? (
+      {filteredOrders.length === 0 ? (
         <div className="bg-white rounded-xl shadow p-10 text-center">
 
           <h2 className="text-xl font-semibold">
-            No orders found
+            {searchTerm
+              ? "No orders found"
+              : "No orders available"}
           </h2>
 
           <p className="text-gray-500 mt-2">
-            Customer orders will appear here.
+            {searchTerm
+              ? "Try a different search term."
+              : "Customer orders will appear here."}
           </p>
 
         </div>
@@ -113,21 +151,21 @@ function AdminOrders() {
             </thead>
             <tbody>
 
-              {orders.map((order, index) => (
+              {filteredOrders.map((order, index) => (
 
                 <tr
                   key={order.id}
                   className="border-b">
 
                   <td className="p-4 font-medium">
-                    #{index + 1}
+                    #{order.id}
                   </td>
 
                   <td className="p-4">
                     <div>
 
                       <p className="font-medium">
-                        {order.customer.name }
+                        {order.customer.name}
                       </p>
 
                       <p className="text-sm text-gray-500">

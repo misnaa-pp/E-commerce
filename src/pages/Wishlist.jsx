@@ -65,7 +65,7 @@ function Wishlist() {
                   <div className="relative aspect-[3/4] overflow-hidden bg-[#eee6dc]">
 
                     <img
-                      src={product.image}
+                      src={product.images}
                       alt={product.title}
                       className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                     />

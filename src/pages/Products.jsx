@@ -1,42 +1,69 @@
-import React from 'react';
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
 import { fetchProducts } from "../redux/slices/productSlice";
 import ProductCard from "../components/ProductCard";
-
-import {useSearchParams,} from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 function Products() {
   const dispatch = useDispatch();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const [searchParams] = useSearchParams();
+  const categoryFromUrl = searchParams.get("category");
 
-  const categoryFromUrl = searchParams.get("category"); 
+  const { products, loading, error } = useSelector(
+    (state) => state.products
+  );
 
-  const { products, loading, error } = useSelector((state) => state.products);
+  const [visibleCount, setVisibleCount] = useState(8);
 
   const filteredProducts = products.filter((product) => {
-  if (!categoryFromUrl) {
-    return true;
-  }
+  const matchesCategory =
+    !categoryFromUrl ||
+    categoryFromUrl === "all" ||
+    product.category?.toLowerCase() === categoryFromUrl.toLowerCase();
 
-  return product.category === categoryFromUrl;
+  const matchesSearch =
+    product.name?.toLowerCase().includes(searchTerm.toLowerCase());
+
+  return matchesCategory && matchesSearch;
 });
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 8;
+  const visibleProducts = filteredProducts.slice(0, visibleCount);
 
-  const lastIndex = currentPage * productsPerPage;
-  const firstIndex = lastIndex - productsPerPage;
+  useEffect(() => {
+    setVisibleCount(8);
+  }, [categoryFromUrl]);
 
-  const currentProducts = filteredProducts.slice(firstIndex, lastIndex);
+  useEffect(() => {
+    const handleScroll = () => {
+      const nearBottom =
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 300;
 
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+      if (nearBottom && visibleCount < filteredProducts.length) {
+        setVisibleCount((count) => count + 8);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [visibleCount, filteredProducts.length]);
 
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
+
+  const handleCategoryChange = (category) => {
+    if (category === "all") {
+      setSearchParams({});
+    } else {
+      setSearchParams({ category });
+    }
+  };
 
   if (loading) {
     return (
@@ -60,35 +87,79 @@ function Products() {
     <main className="min-h-screen bg-[#f8f3ec]">
 
       <section className="px-6 pb-10 pt-14 text-center sm:px-10 lg:px-16">
-        <p className="text-s tracking-[0.3em] text-[#765039]">
+
+        <div className="mx-auto mb-6 flex max-w-7xl justify-end px-6">
+  <div className="flex w-full max-w-sm">
+
+    <input
+      type="text"
+      placeholder="Search products..."
+      value={searchTerm}
+      onChange={(e) => {
+        setSearchTerm(e.target.value);
+        setVisibleCount(8);
+      }}
+      className="w-full border border-[#cbbcaf] bg-transparent px-4 py-2 text-sm text-[#3d2415] outline-none placeholder:text-[#9b897b] focus:border-[#765039]"
+    />
+
+    <button
+      onClick={() => setVisibleCount(8)}
+      className="bg-[#3d2415] px-5 py-2 text-xs tracking-wider text-white transition hover:bg-[#765039]"
+    >
+      SEARCH
+    </button>
+
+  </div>
+</div>
+        <p className="text-sm tracking-[0.3em] text-[#765039]">
           INARAH COLLECTIONS
         </p>
       </section>
 
-  
       <section className="px-6 py-4">
         <div className="mx-auto flex max-w-7xl items-center justify-between">
-
           <div className="flex gap-6 text-xs tracking-wider text-[#765e4e]">
-            <button className="text-[#3d2415]">
+
+            <button
+              onClick={() => handleCategoryChange("all")}
+              className={
+                !categoryFromUrl
+                  ? "text-[#3d2415]"
+                  : "hover:text-[#3d2415]"}>
               ALL
             </button>
 
-            <button className="hover:text-[#3d2415]">
+            <button
+              onClick={() => handleCategoryChange("girls")}
+              className={
+                categoryFromUrl === "girls"
+                  ? "text-[#3d2415]"
+                  : "hover:text-[#3d2415]"} >
               GIRLS
             </button>
 
-            <button className="hover:text-[#3d2415]">
+            <button
+              onClick={() => handleCategoryChange("boys")}
+              className={
+                categoryFromUrl === "boys"
+                  ? "text-[#3d2415]"
+                  : "hover:text-[#3d2415]"}>
               BOYS
             </button>
 
-            <button className="hover:text-[#3d2415]">
+            <button
+              onClick={() => handleCategoryChange("kids")}
+              className={
+                categoryFromUrl === "kids"
+                  ? "text-[#3d2415]"
+                  : "hover:text-[#3d2415]"}>
               KIDS
             </button>
+
           </div>
 
           <p className="hidden text-xs text-[#8a7565] sm:block">
-            {products.length} PRODUCTS
+            {filteredProducts.length} PRODUCTS
           </p>
 
         </div>
@@ -96,7 +167,7 @@ function Products() {
 
       <section className="mx-auto max-w-7xl px-6 py-12 sm:px-10 lg:px-16">
 
-        {currentProducts.length === 0 ? (
+        {visibleProducts.length === 0 ? (
           <div className="py-20 text-center">
             <p className="text-[#765e4e]">
               No products available.
@@ -105,42 +176,25 @@ function Products() {
         ) : (
           <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 lg:grid-cols-4 lg:gap-x-6">
 
-            {currentProducts.map((product) => (
+            {visibleProducts.map((product) => (
               <ProductCard
                 key={product.id}
                 product={product}
               />
             ))}
+
+          </div>
+        )}
+
+        {visibleCount < filteredProducts.length && (
+          <div className="py-10 text-center">
+            <p className="text-xs tracking-widest text-[#765e4e]">
+              LOADING MORE...
+            </p>
           </div>
         )}
 
       </section>
-
-      {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-6 pb-16">
-
-          <button
-            onClick={() =>
-              setCurrentPage((page) => page - 1)
-            }
-            disabled={currentPage === 1}
-            className="text-xs tracking-wider text-[#765e4e] transition hover:text-[#3d2415] disabled:cursor-not-allowed disabled:opacity-30"
-          > ← PREV </button>
-
-          <span className="text-xs tracking-wider text-[#3d2415]">
-            {currentPage} / {totalPages}
-          </span>
-
-          <button
-            onClick={() =>
-              setCurrentPage((page) => page + 1)
-            }
-            disabled={currentPage === totalPages}
-            className="text-xs tracking-wider text-[#765e4e] transition hover:text-[#3d2415] disabled:cursor-not-allowed disabled:opacity-30"
-          > NEXT → </button>
-
-        </div>
-      )}
 
     </main>
   );

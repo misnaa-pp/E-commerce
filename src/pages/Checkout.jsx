@@ -9,7 +9,7 @@ function Checkout() {
   const navigate = useNavigate();
 
   const cartItems = useSelector((state) => state.cart.items);
-  const { loading, error } = useSelector((state) => state.orders);
+  const { orders, loading, error } = useSelector((state) => state.orders);
 
   const [paymentMethod, setPaymentMethod] = useState("cod");
 
@@ -44,7 +44,17 @@ function Checkout() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const numericIds = orders
+      .map((order) => Number(order.id))
+      .filter((id) => Number.isFinite(id));
+
+    const nextOrderId =
+      numericIds.length > 0
+        ? Math.max(...numericIds) + 1
+        : 1;
+
     const orderData = {
+      id: nextOrderId,
       customer: formData,
       paymentMethod,
       items: cartItems,

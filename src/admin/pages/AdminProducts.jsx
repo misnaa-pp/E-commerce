@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProducts, deleteProduct,} from "../../redux/slices/productSlice";
+import { fetchProducts, deleteProduct, } from "../../redux/slices/productSlice";
 import ProductForm from "../components/ProductForm";
 
 function AdminProducts() {
   const dispatch = useDispatch();
 
-  const { products, loading, error,} = useSelector((state) => state.products);
+  const { products, loading, error, } = useSelector((state) => state.products);
   const [showForm, setShowForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 8;
@@ -45,13 +46,30 @@ function AdminProducts() {
     setShowForm(true);
   };
 
+  const filteredProducts = products.filter((product) => {
+    const search = searchTerm.toLowerCase();
+
+    return (
+      product.name?.toLowerCase().includes(search) ||
+      product.category?.toLowerCase().includes(search) ||
+      String(product.id).toLowerCase().includes(search)
+    );
+  });
+
   const totalPages = Math.ceil(
-    products.length / productsPerPage
+    filteredProducts.length / productsPerPage
   );
 
   const startIndex = (currentPage - 1) * productsPerPage;
 
-  const currentProducts = products.slice( startIndex, startIndex + productsPerPage);
+  const currentProducts = filteredProducts.slice(
+    startIndex,
+    startIndex + productsPerPage
+  );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -94,7 +112,7 @@ function AdminProducts() {
   return (
     <div>
 
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+      <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-6">
 
         <div>
           <h1 className="text-2xl font-semibold text-[#5a3e2b]">
@@ -106,11 +124,24 @@ function AdminProducts() {
           </p>
         </div>
 
-        <button
-          onClick={handleAddProduct}
-          className="px-5 py-3 rounded-lg bg-[#5a3e2b] text-white">
-          + Add Product
-        </button>
+        <div className="flex flex-col sm:flex-row gap-3">
+
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search products..."
+            className="w-full sm:w-64 px-4 py-3 border rounded-lg outline-none focus:ring-1 focus:ring-[#5a3e2b]"
+          />
+
+          <button
+            onClick={handleAddProduct}
+            className="px-5 py-3 rounded-lg bg-[#5a3e2b] text-white"
+          >
+            + Add Product
+          </button>
+
+        </div>
 
       </div>
 
@@ -123,22 +154,30 @@ function AdminProducts() {
         </div>
       )}
 
-      {products.length === 0 ? (
+      {filteredProducts.length === 0 ? (
         <div className="bg-white rounded-xl p-10 text-center shadow">
 
           <h2 className="text-xl font-semibold">
-            No products found
+            {searchTerm
+              ? "No products found"
+              : "No products available"}
           </h2>
 
           <p className="text-gray-500 mt-2">
-            Add your first product to get started.
+            {searchTerm
+              ? "Try a different search term."
+              : "Add your first product to get started."}
           </p>
 
-          <button
-            onClick={handleAddProduct}
-            className="mt-5 px-5 py-2 rounded-lg bg-[#5a3e2b] text-white" >
-            Add Product
-          </button>
+          {!searchTerm && (
+            <button
+              onClick={handleAddProduct}
+              className="mt-5 px-5 py-2 rounded-lg bg-[#5a3e2b] text-white"
+            >
+              Add Product
+            </button>
+          )}
+
 
         </div>
       ) : (
@@ -186,9 +225,9 @@ function AdminProducts() {
                         <div className="flex items-center gap-3">
 
                           <img
-                            src={product.image}
+                            src={product.images?.[0] || product.image}
                             alt={product.name}
-                            className="w-14 h-14 object-cover rounded-lg"/>
+                            className="w-14 h-14 object-cover rounded-lg" />
 
                           <div>
 
@@ -268,10 +307,9 @@ function AdminProducts() {
                   onClick={() =>
                     handlePageChange(page)
                   }
-                  className={`px-4 py-2 rounded ${
-                    currentPage === page
+                  className={`px-4 py-2 rounded ${currentPage === page
                       ? "bg-[#5a3e2b] text-white"
-                      : "border" }`} >
+                      : "border"}`} >
                   {page}
                 </button>
               ))}

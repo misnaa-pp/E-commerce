@@ -3,48 +3,10 @@
     {
       "name": "Top + wide pant outfit",
       "category": "Girls",
-      "price": 799,
+      "price": 796,
       "originalPrice": 999,
       "discount": 0,
       "description": "Young girl stylish & sweet bow decor top + wide leg pants outfit.",
-      "image": "https://i.pinimg.com/736x/81/db/f0/81dbf034f72f42f68bbe39d11c1ab981.jpg",
-      "stock": 12,
-      "rating": 4.5,
-      "sizes": [
-        "2Y",
-        "3Y",
-        "4Y",
-        "5Y"
-      ],
-      "colors": [],
-      "images": [],
-      "id": "1"
-    },
-    {
-      "id": "2",
-      "name": "Floral Embroidery top and pant",
-      "category": "Girls",
-      "price": 599,
-      "originalPrice": 749,
-      "description": "Young Girl Floral Embroidery Short Sleeve Top And Straight Leg Pants Set",
-      "image": "https://i.pinimg.com/736x/e2/de/d1/e2ded1d0527404dd6e68c467faab837c.jpg",
-      "stock": 15,
-      "sizes": [
-        "3Y",
-        "4Y",
-        "5Y",
-        "6Y"
-      ],
-      "rating": 4.3
-    },
-    {
-      "id": "3",
-      "name": "boys Outfit",
-      "category": "Boys",
-      "price": 999,
-      "originalPrice": 1200,
-      "description": "cute small boys outfit",
-      "image": "https://i.pinimg.com/736x/41/5a/9f/415a9fe1e2b3e96432e58f6f380a070f.jpg",
       "stock": 10,
       "sizes": [
         "2Y",
@@ -52,7 +14,51 @@
         "4Y",
         "5Y"
       ],
-      "rating": 4.5
+      "colors": [],
+      "images": [
+        "https://i.pinimg.com/736x/b6/4d/1a/b64d1a53d73e81a8974af5e150c12701.jpg"
+      ],
+      "id": "1"
+    },
+    {
+      "name": "Floral Embroidery top and pant",
+      "category": "Girls",
+      "price": 599,
+      "originalPrice": 749,
+      "discount": 0,
+      "description": "Young Girl Floral Embroidery Short Sleeve Top And Straight Leg Pants Set",
+      "images": [
+        "https://i.pinimg.com/736x/e2/de/d1/e2ded1d0527404dd6e68c467faab837c.jpg"
+      ],
+      "stock": 11,
+      "sizes": [
+        "3Y",
+        "4Y",
+        "5Y",
+        "6Y"
+      ],
+      "colors": [],
+      "id": "2"
+    },
+    {
+      "name": "boys Outfit",
+      "category": "Boys",
+      "price": 999,
+      "originalPrice": 1200,
+      "discount": 0,
+      "description": "cute small boys outfit",
+      "images": [
+        "https://i.pinimg.com/1200x/f3/8e/4c/f38e4c0aa17279070ddd04f1f7e41324.jpg"
+      ],
+      "stock": 10,
+      "sizes": [
+        "2Y",
+        "3Y",
+        "4Y",
+        "5Y"
+      ],
+      "colors": [],
+      "id": "3"
     },
     {
       "id": "4",
@@ -68,8 +74,7 @@
         "3Y",
         "4Y",
         "5Y"
-      ],
-      "rating": 4.5
+      ]
     },
     {
       "id": "5",
@@ -85,8 +90,7 @@
         "3Y",
         "4Y",
         "5Y"
-      ],
-      "rating": 4.4
+      ]
     },
     {
       "id": "6",
@@ -102,8 +106,7 @@
         "3Y",
         "4Y",
         "5Y"
-      ],
-      "rating": 4.2
+      ]
     },
     {
       "id": "7",
@@ -119,8 +122,7 @@
         "3Y",
         "4Y",
         "5Y"
-      ],
-      "rating": 4
+      ]
     },
     {
       "id": "8",
@@ -136,8 +138,7 @@
         "3Y",
         "4Y",
         "5Y"
-      ],
-      "rating": 4.5
+      ]
     },
     {
       "id": "9",
@@ -153,8 +154,7 @@
         "3Y",
         "4Y",
         "5Y"
-      ],
-      "rating": 4.5
+      ]
     },
     {
       "id": "10",
@@ -170,8 +170,7 @@
         "3Y",
         "4Y",
         "5Y"
-      ],
-      "rating": 3.9
+      ]
     },
     {
       "id": "12",
@@ -187,8 +186,7 @@
         "3Y",
         "4Y",
         "5Y"
-      ],
-      "rating": 4.5
+      ]
     },
     {
       "id": "13",
@@ -202,8 +200,7 @@
       "sizes": [
         "1Y",
         "2Y"
-      ],
-      "rating": 4.5
+      ]
     },
     {
       "id": "14",
@@ -217,8 +214,7 @@
       "sizes": [
         "1Y",
         "2Y"
-      ],
-      "rating": 4.5
+      ]
     },
     {
       "id": "15",
@@ -234,8 +230,7 @@
         "3Y",
         "4Y",
         "5Y"
-      ],
-      "rating": 4.3
+      ]
     },
     {
       "id": "16",
@@ -251,8 +246,7 @@
         "3Y",
         "4Y",
         "5Y"
-      ],
-      "rating": 4.5
+      ]
     },
     {
       "id": "17",
@@ -268,8 +262,7 @@
         "3Y",
         "4Y",
         "5Y"
-      ],
-      "rating": 4.5
+      ]
     },
     {
       "id": "18",
@@ -283,8 +276,7 @@
       "sizes": [
         "1Y",
         "2Y"
-      ],
-      "rating": 4.5
+      ]
     },
     {
       "id": "19",
@@ -300,8 +292,7 @@
         "3Y",
         "4Y",
         "5Y"
-      ],
-      "rating": 4.5
+      ]
     },
     {
       "id": "20",
@@ -315,23 +306,25 @@
       "sizes": [
         "1Y",
         "2Y"
-      ],
-      "rating": 4.2
+      ]
     },
     {
-      "id": "21",
       "name": "Kids outfit",
       "category": "Kids",
-      "price": 700,
+      "price": 746,
       "originalPrice": 900,
+      "discount": 0,
       "description": "Casual Polyester Jumpsuit for Boys,",
-      "image": "https://i.pinimg.com/736x/23/3c/3f/233c3f21f823bd766b36b72f16c7ac8a.jpg",
-      "stock": 8,
+      "images": [
+        "https://i.pinimg.com/736x/23/3c/3f/233c3f21f823bd766b36b72f16c7ac8a.jpg"
+      ],
+      "stock": 7,
       "sizes": [
         "1Y",
         "2Y"
       ],
-      "rating": 4.4
+      "colors": [],
+      "id": "21"
     },
     {
       "id": "22",
@@ -347,8 +340,7 @@
         "3Y",
         "4Y",
         "5Y"
-      ],
-      "rating": 4.5
+      ]
     }
   ],
   "users": [
@@ -357,6 +349,29 @@
       "email": "misna@gmail.com",
       "password": "misna123",
       "id": "T7wH48AQGmI",
+      "isBlocked": false
+    },
+    {
+      "name": "thahira",
+      "email": "thahira@gmail.com",
+      "password": "thahira123",
+      "confirmPassword": "thahira123",
+      "id": "EsBlo2Kxsv8",
+      "isBlocked": false
+    },
+    {
+      "name": "miya",
+      "email": "miya@gmail.com",
+      "password": "miya123",
+      "confirmPassword": "miya123",
+      "id": "bv8uzBa2Wis"
+    },
+    {
+      "name": "minnath",
+      "email": "minnath@gmail.com",
+      "password": "minnath123",
+      "confirmPassword": "minnath123",
+      "id": "Ak441Io9_SI",
       "isBlocked": false
     }
   ],
@@ -397,7 +412,121 @@
       "total": 849,
       "status": "Pending",
       "createdAt": "2026-08-27T04:24:23.413Z",
-      "id": "44ilc_ccKYw"
+      "id": "1"
+    },
+    {
+      "customer": {
+        "name": "Misna pp",
+        "email": "miisnaaah@gmail.com",
+        "phone": "7012774733",
+        "address": "pothipurath house",
+        "city": "thirunavaya",
+        "state": "kerala",
+        "pincode": "676301"
+      },
+      "paymentMethod": "cod",
+      "items": [
+        {
+          "id": "3",
+          "name": "boys Outfit",
+          "category": "Boys",
+          "price": 999,
+          "originalPrice": 1200,
+          "description": "cute small boys outfit",
+          "image": "https://i.pinimg.com/736x/41/5a/9f/415a9fe1e2b3e96432e58f6f380a070f.jpg",
+          "stock": 10,
+          "sizes": [
+            "2Y",
+            "3Y",
+            "4Y",
+            "5Y"
+          ],
+          "rating": 4.5,
+          "quantity": 1
+        }
+      ],
+      "subtotal": 999,
+      "shipping": 50,
+      "total": 1049,
+      "status": "Pending",
+      "createdAt": "2026-09-01T14:06:34.320Z",
+      "id": "2"
+    },
+    {
+      "customer": {
+        "name": "thahira",
+        "email": "thahira@gmail.com",
+        "phone": "8111901540",
+        "address": "kalllingal house",
+        "city": "tirur",
+        "state": "kerala",
+        "pincode": "676303"
+      },
+      "paymentMethod": "cod",
+      "items": [
+        {
+          "name": "Top + wide pant outfit",
+          "category": "Girls",
+          "price": 796,
+          "originalPrice": 999,
+          "discount": 0,
+          "description": "Young girl stylish & sweet bow decor top + wide leg pants outfit.",
+          "image": "https://i.pinimg.com/736x/b6/4d/1a/b64d1a53d73e81a8974af5e150c12701.jpg",
+          "stock": 12,
+          "sizes": [
+            "2Y",
+            "3Y",
+            "4Y",
+            "5Y"
+          ],
+          "colors": [],
+          "id": "1",
+          "quantity": 1
+        }
+      ],
+      "subtotal": 796,
+      "shipping": 50,
+      "total": 846,
+      "status": "Pending",
+      "createdAt": "2026-09-03T05:24:13.967Z",
+      "id": "3"
+    },
+    {
+      "customer": {
+        "name": "minnath",
+        "email": "minnu@gmail.com",
+        "phone": "9061722398",
+        "address": "pothipurath house",
+        "city": "tirur",
+        "state": "kerala",
+        "pincode": "676303"
+      },
+      "paymentMethod": "cod",
+      "items": [
+        {
+          "id": "5",
+          "name": "boys Outfit",
+          "category": "Boys",
+          "price": 749,
+          "originalPrice": 949,
+          "description": "Boys casual outfit",
+          "image": "https://i.pinimg.com/1200x/81/f4/2c/81f42ceb7efb423fd59cf6c164fdad8b.jpg",
+          "stock": 8,
+          "sizes": [
+            "2Y",
+            "3Y",
+            "4Y",
+            "5Y"
+          ],
+          "quantity": 1
+        }
+      ],
+      "subtotal": 749,
+      "shipping": 50,
+      "total": 799,
+      "status": "Pending",
+      "createdAt": "2026-09-03T05:37:51.842Z",
+      "id": "4"
     }
   ],
   "admins": [
@@ -407,5 +536,6 @@
       "email": "admin@gmail.com",
       "password": "admin123"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

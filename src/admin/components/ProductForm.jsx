@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { addProduct,updateProduct,} from "../../redux/slices/productSlice";
+import { addProduct, updateProduct, } from "../../redux/slices/productSlice";
+import toast from "react-hot-toast"
 
 function ProductForm({ product, onClose }) {
   const dispatch = useDispatch();
@@ -13,7 +14,6 @@ function ProductForm({ product, onClose }) {
     discount: "",
     description: "",
     stock: "",
-    rating: "",
     sizes: "",
     colors: "",
     images: "",
@@ -33,13 +33,27 @@ function ProductForm({ product, onClose }) {
         description:
           product.description || "",
         stock: product.stock || "",
-        rating: product.rating || "",
         sizes:
           product.sizes?.join(", ") || "",
         colors:
           product.colors?.join(", ") || "",
         images:
-          product.images?.join(", ") || "",
+          product.images?.join(", ") ||
+          product.image ||
+          "",
+      });
+    } else {
+      setFormData({
+        name: "",
+        category: "",
+        price: "",
+        originalPrice: "",
+        discount: "",
+        description: "",
+        stock: "",
+        sizes: "",
+        colors: "",
+        images: "",
       });
     }
   }, [product]);
@@ -59,10 +73,9 @@ function ProductForm({ product, onClose }) {
       category: formData.category,
       price: Number(formData.price),
       originalPrice: Number(formData.originalPrice),
-      discount:Number(formData.discount),
+      discount: Number(formData.discount),
       description: formData.description,
       stock: Number(formData.stock),
-      rating: Number(formData.rating),
       sizes: formData.sizes
         .split(",")
         .map((item) => item.trim())
@@ -75,6 +88,8 @@ function ProductForm({ product, onClose }) {
         .split(",")
         .map((item) => item.trim())
         .filter(Boolean),
+
+        
     };
 
     try {
@@ -87,13 +102,20 @@ function ProductForm({ product, onClose }) {
             product: productData,
           })
         ).unwrap();
+        toast.success("Product updated successfully!");
       } else {
         await dispatch(addProduct(productData)).unwrap();
+        toast.success("Product added successfully!");
       }
 
       onClose();
     } catch (error) {
       console.error(error);
+      toast.error(
+        product
+          ? "Failed to update product"
+          : "Failed to add product"
+      );
     } finally {
       setSaving(false);
     }
@@ -105,9 +127,7 @@ function ProductForm({ product, onClose }) {
       <div className="flex justify-between items-center mb-6">
 
         <h2 className="text-xl font-semibold text-[#5a3e2b]">
-          {product
-            ? "Edit Product"
-            : "Add Product"}
+          {product ? "Edit Product" : "Add Product"}
         </h2>
 
         <button
@@ -120,24 +140,36 @@ function ProductForm({ product, onClose }) {
       </div>
       <form
         onSubmit={handleSubmit}
-        className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        className="grid grid-cols-[150px_1fr] gap-x-1 gap-y-3">
 
+        <label
+          htmlFor="name"
+          className="block mb-2 font-medium text-gray-700">
+          Product Name</label>
         <input
           name="name"
           placeholder="Product name"
           value={formData.name}
           onChange={handleChange}
           required
-          className="border p-3 rounded-lg"/>
+          className="border p-3 rounded-lg" />
 
+           <label
+            htmlFor="category"
+            className="block mb-2 font-medium text-gray-700">
+            Category</label>
         <input
           name="category"
           placeholder="Category"
           value={formData.category}
           onChange={handleChange}
           required
-          className="border p-3 rounded-lg"/>
+          className="border p-3 rounded-lg" />
 
+          <label
+            htmlFor="price"
+            className="block mb-2 font-medium text-gray-700">
+            Price</label>
         <input
           name="price"
           type="number"
@@ -145,24 +177,36 @@ function ProductForm({ product, onClose }) {
           value={formData.price}
           onChange={handleChange}
           required
-          className="border p-3 rounded-lg"/>
+          className="border p-3 rounded-lg" />
 
+           <label
+            htmlFor="originalPrice"
+            className="block mb-2 font-medium text-gray-700">
+            Original Price</label>
         <input
           name="originalPrice"
           type="number"
           placeholder="Original Price"
           value={formData.originalPrice}
           onChange={handleChange}
-          className="border p-3 rounded-lg"/>
+          className="border p-3 rounded-lg" />
 
+          <label
+            htmlFor="discount"
+            className="block mb-2 font-medium text-gray-700">
+            Discount (%) </label>
         <input
           name="discount"
           type="number"
           placeholder="Discount %"
           value={formData.discount}
           onChange={handleChange}
-          className="border p-3 rounded-lg"/>
+          className="border p-3 rounded-lg" />
 
+          <label
+            htmlFor="stock"
+            className="block mb-2 font-medium text-gray-700">
+            Stock </label>
         <input
           name="stock"
           type="number"
@@ -170,31 +214,34 @@ function ProductForm({ product, onClose }) {
           value={formData.stock}
           onChange={handleChange}
           required
-          className="border p-3 rounded-lg"/>
+          className="border p-3 rounded-lg" />
 
-        <input
-          name="rating"
-          type="number"
-          step="0.1"
-          placeholder="Rating"
-          value={formData.rating}
-          onChange={handleChange}
-          className="border p-3 rounded-lg"/>
-
+          <label
+            htmlFor="sizes"
+            className="block mb-2 font-medium text-gray-700">
+            Sizes</label>
         <input
           name="sizes"
           placeholder="Sizes: 2Y, 4Y, 6Y"
           value={formData.sizes}
           onChange={handleChange}
-          className="border p-3 rounded-lg"/>
+          className="border p-3 rounded-lg" />
 
+          <label
+            htmlFor="colors"
+            className="block mb-2 font-medium text-gray-700">
+            Colors</label>
         <input
           name="colors"
           placeholder="Colors: Brown, White"
           value={formData.colors}
           onChange={handleChange}
-          className="border p-3 rounded-lg"/>
+          className="border p-3 rounded-lg" />
 
+           <label
+            htmlFor="images"
+            className="block mb-2 font-medium text-gray-700">
+            Product Image URLs</label>
         <input
           name="images"
           placeholder="Image URLs separated by comma"
@@ -202,13 +249,17 @@ function ProductForm({ product, onClose }) {
           onChange={handleChange}
           className="border p-3 rounded-lg md:col-span-2" />
 
+          <label
+            htmlFor="description"
+            className="block mb-2 font-medium text-gray-700">
+            Description</label>
         <textarea
           name="description"
           placeholder="Description"
           value={formData.description}
           onChange={handleChange}
           rows="4"
-          className="border p-3 rounded-lg md:col-span-2"/>
+          className="border p-3 rounded-lg md:col-span-2" />
 
         <div className="md:col-span-2 flex gap-3">
 
@@ -219,8 +270,8 @@ function ProductForm({ product, onClose }) {
             {saving
               ? "Saving..."
               : product
-              ? "Update Product"
-              : "Add Product"}
+                ? "Update Product"
+                : "Add Product"}
           </button>
 
           <button
