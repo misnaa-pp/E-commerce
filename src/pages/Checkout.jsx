@@ -315,7 +315,7 @@ function Checkout() {
                   >
                     <div className="relative h-20 w-16 shrink-0 overflow-hidden bg-[#eee6dc]">
                       <img
-                        src={item.image}
+                        src={item.images}
                         alt={item.title}
                         className="h-full w-full object-cover"
                       />
