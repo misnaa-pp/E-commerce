@@ -39,7 +39,7 @@ function Home() {
 
             <Link
               to="/products"
-              className="mt-8 inline-block bg-[#6b3f22] px-8 py-4 text-sm font-medium tracking-wide text-white transition duration-300 hover:bg-[#4d2c19]"
+              className="mt-8 inline-block bg-[#6b3f22] px-8 py-4 text-sm font-medium tracking-wide !text-white transition duration-300 hover:bg-[#4d2c19]"
             >
               SHOP NOW
             </Link>
@@ -170,7 +170,7 @@ function Home() {
 
           <Link
             to="/products"
-            className="mt-6 w-fit border border-[#6b3f22] px-7 py-3 text-sm font-medium tracking-wide text-[#6b3f22] transition hover:bg-[#6b3f22] hover:text-white"
+            className="mt-6 w-fit border border-[#6b3f22] px-7 py-3 text-sm font-medium tracking-wide text-[#6b3f22] transition hover:bg-[#6b3f22] hover:!text-white"
           >
             EXPLORE COLLECTION →
           </Link>
@@ -188,6 +188,113 @@ function Home() {
         </div>
 
       </section>
+
+      
+{/* Why Shop with Inarah */}
+<section className="bg-[#F5F0E8] px-6 py-20 sm:px-10 lg:px-16">
+
+  <div className="mx-auto max-w-7xl">
+
+    {/* Section Heading */}
+    <div className="mb-14 text-center">
+
+      <p className="mb-4 text-xs font-medium tracking-[0.3em] text-[#765039]">
+        THE INARAH EXPERIENCE
+      </p>
+
+      <h2 className="font-serif text-4xl font-normal text-[#3E2617] sm:text-5xl">
+        Why Shop with Inarah?
+      </h2>
+
+      <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-[#765e4e] sm:text-base">
+        Because little ones deserve a little extra love.
+        Discover thoughtfully selected styles that make
+        every childhood moment even more special.
+      </p>
+
+    </div>
+
+    {/* Benefit Cards */}
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+
+      {/* Card 1 */}
+      <div className="group border border-[#E5D8C9] bg-[#FAF7F2] px-7 py-10 text-center transition duration-300 hover:-translate-y-2 hover:shadow-lg">
+
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#EDE2D5] text-3xl text-[#6b3f22]">
+          ♡
+        </div>
+
+        <h3 className="font-serif text-xl text-[#3E2617]">
+          Comfort Comes First
+        </h3>
+
+        <p className="mt-4 text-sm leading-7 text-[#765e4e]">
+          Thoughtfully selected styles that keep your
+          little ones comfortable throughout the day.
+        </p>
+
+      </div>
+
+      {/* Card 2 */}
+      <div className="group border border-[#E5D8C9] bg-[#FAF7F2] px-7 py-10 text-center transition duration-300 hover:-translate-y-2 hover:shadow-lg">
+
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#EDE2D5] text-3xl text-[#6b3f22]">
+          ✿
+        </div>
+
+        <h3 className="font-serif text-xl text-[#3E2617]">
+          Styles for Every Moment
+        </h3>
+
+        <p className="mt-4 text-sm leading-7 text-[#765e4e]">
+          From everyday adventures to special celebrations,
+          find lovely outfits for every occasion.
+        </p>
+
+      </div>
+
+      {/* Card 3 */}
+      <div className="group border border-[#E5D8C9] bg-[#FAF7F2] px-7 py-10 text-center transition duration-300 hover:-translate-y-2 hover:shadow-lg">
+
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#EDE2D5] text-3xl text-[#6b3f22]">
+          ✨
+        </div>
+
+        <h3 className="font-serif text-xl text-[#3E2617]">
+          Little Details, Big Love
+        </h3>
+
+        <p className="mt-4 text-sm leading-7 text-[#765e4e]">
+          Charming designs and playful details that
+          celebrate the joy of childhood.
+        </p>
+
+      </div>
+
+      {/* Card 4 */}
+      <div className="group border border-[#E5D8C9] bg-[#FAF7F2] px-7 py-10 text-center transition duration-300 hover:-translate-y-2 hover:shadow-lg">
+
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#EDE2D5] text-3xl text-[#6b3f22]">
+          ♡
+        </div>
+
+        <h3 className="font-serif text-xl text-[#3E2617]">
+          Shopping Made Lovely
+        </h3>
+
+        <p className="mt-4 text-sm leading-7 text-[#765e4e]">
+          Explore our collections and find your
+          little one's next favourite outfit with ease.
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
 
       
     </div>

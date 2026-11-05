@@ -79,12 +79,23 @@ function Navbar() {
 
         <div>
           {isAuthenticated ? (
-            <button
-              onClick={handleLogout}
-              className="rounded-full border border-[#737466] px-5 py-2.5 font-serif text-sm text-[#5b5a4d] transition hover:bg-[#4e2d19] hover:text-[#f8f3ec]"
-            >
-              Logout
-            </button>
+            <div className="flex items-center gap-3">
+
+              <Link
+                to="/profile"
+                className="rounded-full border border-[#737466] px-5 py-2.5 font-serif text-sm text-[#5b5a4d] transition hover:bg-[#e8ddd0]"
+              >
+                My Profile
+              </Link>
+
+              <button
+                onClick={handleLogout}
+                className="rounded-full bg-[#6b3f22] px-5 py-2.5 font-serif text-sm text-white transition hover:bg-[#4e2d19]"
+              >
+                Logout
+              </button>
+
+            </div>
           ) : (
             <Link
               to="/login"

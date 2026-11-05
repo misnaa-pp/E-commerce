@@ -3,7 +3,7 @@
     {
       "name": "Top + wide pant outfit",
       "category": "Girls",
-      "price": 796,
+      "price": 799,
       "originalPrice": 999,
       "discount": 0,
       "description": "Young girl stylish & sweet bow decor top + wide leg pants outfit.",
@@ -27,10 +27,7 @@
       "originalPrice": 749,
       "discount": 0,
       "description": "Young Girl Floral Embroidery Short Sleeve Top And Straight Leg Pants Set",
-      "images": [
-        "https://i.pinimg.com/736x/e2/de/d1/e2ded1d0527404dd6e68c467faab837c.jpg"
-      ],
-      "stock": 11,
+      "stock": 12,
       "sizes": [
         "3Y",
         "4Y",
@@ -38,6 +35,9 @@
         "6Y"
       ],
       "colors": [],
+      "images": [
+        "https://i.pinimg.com/736x/e2/de/d1/e2ded1d0527404dd6e68c467faab837c.jpg"
+      ],
       "id": "2"
     },
     {
@@ -47,10 +47,7 @@
       "originalPrice": 1200,
       "discount": 0,
       "description": "cute small boys outfit",
-      "images": [
-        "https://i.pinimg.com/1200x/f3/8e/4c/f38e4c0aa17279070ddd04f1f7e41324.jpg"
-      ],
-      "stock": 10,
+      "stock": 5,
       "sizes": [
         "2Y",
         "3Y",
@@ -58,6 +55,9 @@
         "5Y"
       ],
       "colors": [],
+      "images": [
+        "https://i.pinimg.com/1200x/f3/8e/4c/f38e4c0aa17279070ddd04f1f7e41324.jpg"
+      ],
       "id": "3"
     },
     {
@@ -141,20 +141,24 @@
       ]
     },
     {
-      "id": "9",
       "name": "Summer Outfit for Girls",
       "category": "Girls",
       "price": 700,
       "originalPrice": 949,
+      "discount": 0,
       "description": "Floral girl dress ",
-      "image": "https://i.pinimg.com/736x/20/57/cb/2057cb4134f6813b0efc511ffc5ec55d.jpg",
-      "stock": 7,
+      "stock": 8,
       "sizes": [
         "2Y",
         "3Y",
         "4Y",
         "5Y"
-      ]
+      ],
+      "colors": [],
+      "images": [
+        "https://i.pinimg.com/736x/20/57/cb/2057cb4134f6813b0efc511ffc5ec55d.jpg"
+      ],
+      "id": "9"
     },
     {
       "id": "10",
@@ -373,6 +377,20 @@
       "confirmPassword": "minnath123",
       "id": "Ak441Io9_SI",
       "isBlocked": false
+    },
+    {
+      "name": "ahsana",
+      "email": "ahsanasajid08@gmail.com",
+      "password": "123AHSANA",
+      "confirmPassword": "123AHSANA",
+      "id": "834XS7RCJwU"
+    },
+    {
+      "name": "asmin",
+      "email": "aswin@gmail.com",
+      "password": "aswin123",
+      "confirmPassword": "aswin123",
+      "id": "LysIjUg0suU"
     }
   ],
   "orders": [
@@ -410,7 +428,7 @@
       "subtotal": 799,
       "shipping": 50,
       "total": 849,
-      "status": "Pending",
+      "status": "Cancelled",
       "createdAt": "2026-08-27T04:24:23.413Z",
       "id": "1"
     },
@@ -527,6 +545,93 @@
       "status": "Pending",
       "createdAt": "2026-09-03T05:37:51.842Z",
       "id": "4"
+    },
+    {
+      "id": "5",
+      "customer": {
+        "name": "miya",
+        "email": "miya@gamil.com",
+        "phone": "9020401540",
+        "address": "kallingal house",
+        "city": "thirunavaya",
+        "state": "kerala",
+        "pincode": "676301"
+      },
+      "paymentMethod": "cod",
+      "items": [
+        {
+          "id": "14",
+          "name": "Kids outfit",
+          "category": "Kids",
+          "price": 799,
+          "originalPrice": 999,
+          "description": "adorable baby romper",
+          "image": "https://i.pinimg.com/1200x/a2/33/47/a233475dc187bcc68c6b3e7125334d5a.jpg",
+          "stock": 10,
+          "sizes": [
+            "1Y",
+            "2Y"
+          ],
+          "quantity": 2
+        },
+        {
+          "id": "13",
+          "name": "Kids outfit",
+          "category": "Kids",
+          "price": 699,
+          "originalPrice": 899,
+          "description": "Long Sleeve Unisex Infant Bodysuit",
+          "image": "https://i.pinimg.com/1200x/01/6f/68/016f686e66ba0998ce9212cfdad89f3e.jpg",
+          "stock": 10,
+          "sizes": [
+            "1Y",
+            "2Y"
+          ],
+          "quantity": 1
+        }
+      ],
+      "subtotal": 2297,
+      "shipping": 0,
+      "total": 2297,
+      "status": "Pending",
+      "createdAt": "2026-09-04T04:38:26.421Z"
+    },
+    {
+      "id": "zFL9DvLslz0",
+      "customer": {
+        "name": ";;;;;;;;;;;;;;",
+        "email": "12465@gmail.com",
+        "phone": "90000000000000000000000000000000",
+        "address": "koppans ",
+        "city": "pattambi",
+        "state": "palakkad",
+        "pincode": "679306"
+      },
+      "paymentMethod": "cod",
+      "items": [
+        {
+          "id": "5",
+          "name": "boys Outfit",
+          "category": "Boys",
+          "price": 749,
+          "originalPrice": 949,
+          "description": "Boys casual outfit",
+          "image": "https://i.pinimg.com/1200x/81/f4/2c/81f42ceb7efb423fd59cf6c164fdad8b.jpg",
+          "stock": 8,
+          "sizes": [
+            "2Y",
+            "3Y",
+            "4Y",
+            "5Y"
+          ],
+          "quantity": 1
+        }
+      ],
+      "subtotal": 749,
+      "shipping": 50,
+      "total": 799,
+      "status": "Pending",
+      "createdAt": "2026-10-07T09:00:04.735Z"
     }
   ],
   "admins": [

@@ -19,6 +19,9 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Checkout from "../pages/Checkout";
 import Orders from "../pages/Orders";
+import OrderDetails from "../pages/OrderDetails";
+import Profile from "../pages/Profile";
+
 
 function AppRoutes() {
   return (
@@ -35,6 +38,8 @@ function AppRoutes() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/orders" element={<Orders />} />
+          <Route path="/orders/:id" element={<OrderDetails />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
 
       </Route>

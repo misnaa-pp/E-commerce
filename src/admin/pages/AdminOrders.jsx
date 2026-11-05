@@ -45,11 +45,11 @@ function AdminOrders() {
     );
   });
 
-  const handleViewDetails = (orderId, orderNumber) => {
-    dispatch(fetchOrderById(orderId));
-    setSelectedOrderNumber(orderNumber);
-    setShowDetails(true);
-  };
+  const handleViewDetails = (orderId) => {
+  dispatch(fetchOrderById(orderId));
+  setSelectedOrderNumber(orderId);
+  setShowDetails(true);
+};
 
   if (
     loading &&
@@ -151,7 +151,7 @@ function AdminOrders() {
             </thead>
             <tbody>
 
-              {filteredOrders.map((order, index) => (
+              {filteredOrders.map((order) => (
 
                 <tr
                   key={order.id}
@@ -193,10 +193,7 @@ function AdminOrders() {
                   <td className="p-4">
 
                     <button
-                      onClick={() =>
-                        handleViewDetails(
-                          order.id, index + 1
-                        )
+                      onClick={() => handleViewDetails(order.id)
                       }
                       className="px-4 py-2 rounded-lg bg-[#5a3e2b] text-white" >
                       View Details
