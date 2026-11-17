@@ -1,11 +1,12 @@
-import React from 'react';
-import { useState } from "react";
+
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 
-import { getUsers } from "../services/UserService";
-import { login } from "../redux/slices/authSlice";
+import { login } from "../redux/slices/AuthSlice";
+import {loginUser,getMyProfile} from "../services/authService";
+
 
 function Login() {
   const dispatch = useDispatch();
@@ -25,37 +26,46 @@ function Login() {
     });
   };
 
-  const handleSubmit = async (e) => {
+  
+
+
+const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      setError("");
-      const users = await getUsers();
+        setError("");
 
-      const user = users.find(
-        (user) =>
-          user.email === formData.email &&
-          user.password === formData.password
-      );
+        const response = await loginUser({
+            email: formData.email,
+            password: formData.password
+        });
 
-      if (!user) {
-        toast.error("Invalid email or password");
-        return;
-      }
+        const accessToken = response.accessToken;
+        const refreshToken = response.refreshToken;
 
-      if (user.isBlocked) {
-        toast.error( "Your account has been blocked. Please contact the administrator.");
-        return;
-      }
+        const user = await getMyProfile(accessToken);
 
-      dispatch(login(user));
+        dispatch(login({
+            user,
+            accessToken,
+            refreshToken
+        }));
 
-      navigate("/");
+        toast.success("Login successful!");
+
+        navigate("/");
 
     } catch (error) {
-      toast.error("Login failed");
+        const message =
+            error.response?.data?.message ||
+            "Login failed";
+
+        setError(message);
+        toast.error(message);
     }
-  };
+};
+
+
 
   return (
     <div className="min-h-[calc(100vh-95px)] bg-bg-[#EDE4D8] flex items-center justify-center px-4 py-12">

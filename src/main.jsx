@@ -6,6 +6,18 @@ import {Provider} from 'react-redux'
 import { store } from './redux/store.js'
 import { BrowserRouter } from 'react-router-dom'
 import "./responsive.css";
+import { updateTokens, logout } from "./redux/slices/AuthSlice";
+
+
+
+window.addEventListener("authTokensUpdated", (event) => {
+    store.dispatch(updateTokens(event.detail));
+});
+
+window.addEventListener("authSessionExpired", () => {
+    store.dispatch(logout());
+});
+
 
 
 createRoot(document.getElementById('root')).render(

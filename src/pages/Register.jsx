@@ -1,8 +1,9 @@
-import React from 'react';
-import { useState } from "react";
+
+import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { createUser, getUsers } from "../services/UserService";
+import { registerUser } from "../services/authService";
 import toast from "react-hot-toast";
+
 
 function Register() {
   const navigate = useNavigate();
@@ -23,37 +24,37 @@ function Register() {
     });
   };
 
-  const handleSubmit = async (e) => {
+  
+const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
+        toast.error("Passwords do not match");
+        return;
     }
 
     try {
-      toast.error("");
+        const userData = {
+            name: formData.name,
+            email: formData.email,
+            password: formData.password
+        };
 
-      const users = await getUsers();
+        const response = await registerUser(userData);
 
-      const existingUser = users.find(
-        (user) => user.email === formData.email
-      );
+        toast.success(response.message);
 
-      if (existingUser) {
-        toast.error("Email already registered");
-        return;
-      }
+        navigate("/login");
 
-      await createUser(formData);
-
-      toast.success("Registration successful!");
-
-      navigate("/login");
     } catch (error) {
-      toast.error("Registration failed");
+        const message =
+            error.response?.data?.message ||
+            "Registration failed";
+
+        toast.error(message);
     }
-  };
+};
+
 
   return (
     <div className="min-h-[calc(100vh-95px)] bg-bg-[#EDE4D8] flex items-center justify-center px-4 py-12">

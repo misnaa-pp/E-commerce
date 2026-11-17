@@ -349,13 +349,6 @@
   ],
   "users": [
     {
-      "name": "misna",
-      "email": "misna@gmail.com",
-      "password": "misna123",
-      "id": "T7wH48AQGmI",
-      "isBlocked": false
-    },
-    {
       "name": "thahira",
       "email": "thahira@gmail.com",
       "password": "thahira123",

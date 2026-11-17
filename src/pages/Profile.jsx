@@ -3,16 +3,15 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
-import { updateUser } from "../redux/slices/userSlice";
-import { login } from "../redux/slices/authSlice";
-import { getUsers } from "../services/UserService";
+import { updateUser } from "../redux/slices/AuthSlice";
+import { updateProfile } from "../services/authService";
+
 
 function Profile() {
   const dispatch = useDispatch();
 
   const user = useSelector((state) => state.auth.user);
-  const { loading } = useSelector((state) => state.users);
-
+  const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -22,7 +21,6 @@ function Profile() {
 
   const [errors, setErrors] = useState({});
 
-  // Load logged-in user's details
   useEffect(() => {
     if (user) {
       setFormData({
@@ -54,7 +52,7 @@ function Profile() {
     }));
   };
 
-  // Validate profile details
+  
   const validateForm = () => {
     const newErrors = {};
 
@@ -83,66 +81,62 @@ function Profile() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+  
+const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!user?.id) {
-      toast.error("Unable to identify your account. Please log in again.");
-      return;
+    if (!user?.userId) {
+        toast.error("Unable to identify your account. Please login again.");
+        return;
     }
 
     if (!validateForm()) {
-      toast.error("Please correct the highlighted fields.");
-      return;
+        toast.error("Please correct the highlighted fields.");
+        return;
     }
 
     try {
-      // Check whether another user already uses this email
-      const users = await getUsers();
+        setIsSaving(true);
 
-      const emailExists = users.some(
-        (existingUser) =>
-          existingUser.email?.toLowerCase() ===
-            formData.email.trim().toLowerCase() &&
-          String(existingUser.id) !== String(user.id)
-      );
+        const profileData = {
+            name: formData.name.trim(),
+            email: formData.email.trim(),
+            phone: formData.phone.trim() || null,
+            address: formData.address.trim() || null
+        };
 
-      if (emailExists) {
-        setErrors((prev) => ({
-          ...prev,
-          email: "This email is already registered.",
-        }));
+        // Send updated details to ASP.NET Core
+        const updatedUser = await updateProfile(profileData);
 
-        toast.error("Email already registered.");
-        return;
-      }
+        // Update Redux and Local Storage
+        dispatch(updateUser(updatedUser));
 
-      // Preserve existing user properties
-      const userData = {
-        ...user,
-        name: formData.name.trim(),
-        email: formData.email.trim(),
-        phone: formData.phone.trim(),
-        address: formData.address.trim(),
-      };
+        toast.success("Profile updated successfully!");
 
-      // Update user in JSON Server
-      const updatedUser = await dispatch(
-        updateUser({
-          id: user.id,
-          userData,
-        })
-      ).unwrap();
-
-      // Update Redux authentication and localStorage
-      dispatch(login(updatedUser));
-
-      toast.success("Profile updated successfully!");
     } catch (error) {
-      console.error("Profile update failed:", error);
-      toast.error("Unable to update profile. Please try again.");
+        console.error("Profile update failed:", error);
+
+        const message =
+            error.response?.data?.message ||
+            "Unable to update profile. Please try again.";
+
+        toast.error(message);
+
+        if (error.response?.status === 401) {
+            toast.error("Your session has expired. Please login again.");
+        }
+
+        if (error.response?.status === 400) {
+            setErrors((prev) => ({
+                ...prev,
+                email: message
+            }));
+        }
+
+    } finally {
+        setIsSaving(false);
     }
-  };
+};
 
   const inputClass = (field) =>
     `w-full border ${
@@ -171,7 +165,7 @@ function Profile() {
 
       <div className="mx-auto max-w-3xl">
 
-        {/* Heading */}
+
         <div className="mb-10 text-center">
           <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-[#e8ddd0] font-serif text-3xl uppercase text-[#6b3f22]">
             {user.name?.charAt(0) || "U"}
@@ -186,14 +180,12 @@ function Profile() {
           </p>
         </div>
 
-        {/* Profile Form */}
         <section className="border border-[#e5ded4] bg-[#fffdf9] p-6 sm:p-10">
 
           <form onSubmit={handleSubmit} noValidate>
 
             <div className="space-y-6">
 
-              {/* Name */}
               <div>
                 <label className="mb-2 block text-xs tracking-wider text-[#765e4e]">
                   FULL NAME
@@ -211,7 +203,6 @@ function Profile() {
                 <ErrorMessage field="name" />
               </div>
 
-              {/* Email */}
               <div>
                 <label className="mb-2 block text-xs tracking-wider text-[#765e4e]">
                   EMAIL ADDRESS
@@ -229,7 +220,6 @@ function Profile() {
                 <ErrorMessage field="email" />
               </div>
 
-              {/* Phone */}
               <div>
                 <label className="mb-2 block text-xs tracking-wider text-[#765e4e]">
                   PHONE NUMBER
@@ -249,7 +239,6 @@ function Profile() {
                 <ErrorMessage field="phone" />
               </div>
 
-              {/* Address */}
               <div>
                 <label className="mb-2 block text-xs tracking-wider text-[#765e4e]">
                   DELIVERY ADDRESS
@@ -268,15 +257,14 @@ function Profile() {
 
             </div>
 
-            {/* Buttons */}
             <div className="mt-9 flex flex-col gap-4 sm:flex-row">
 
               <button
                 type="submit"
-                disabled={loading}
+                disabled={isSaving}
                 className="flex-1 bg-[#6b3f22] px-6 py-4 text-xs font-medium tracking-widest text-white transition hover:bg-[#4f2d18] disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {loading ? "SAVING..." : "SAVE CHANGES"}
+                {isSaving ? "SAVING..." : "SAVE CHANGES"}
               </button>
 
               <Link
