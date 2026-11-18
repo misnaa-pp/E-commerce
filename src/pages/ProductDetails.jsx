@@ -2,21 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  useNavigate,
-  useParams,
-  Link,
-} from "react-router-dom";
+import {useNavigate,useParams,Link,} from "react-router-dom";
 import toast from "react-hot-toast";
-
 import { fetchProductById } from "../redux/slices/productSlice";
-
 import { addToCart } from "../redux/slices/cartSlice";
-
-import {
-  addToWishlist,
-  removeFromWishlist,
-} from "../redux/slices/wishlistSlice";
+import {addToWishlist,removeFromWishlist,} from "../redux/slices/wishlistSlice";
 
 function ProductDetails() {
   const { id } = useParams();
@@ -167,15 +157,30 @@ function ProductDetails() {
     });
   };
 
-  const handleWishlist = () => {
-    if (isWishlisted) {
-      dispatch(removeFromWishlist(product.id));
-      toast.success("Removed from wishlist");
-    } else {
-      dispatch(addToWishlist(product));
-      toast.success("Added to wishlist");
+  
+const handleWishlist = async () => {
+    try {
+        if (isWishlisted) {
+            await dispatch(
+                removeFromWishlist(product.id)
+            ).unwrap();
+
+            toast.success("Removed from wishlist");
+        } else {
+            await dispatch(
+                addToWishlist(product)
+            ).unwrap();
+
+            toast.success("Added to wishlist");
+        }
+    } catch (error) {
+        toast.error(
+            typeof error === "string"
+                ? error
+                : "Wishlist operation failed"
+        );
     }
-  };
+};
 
   return (
     <main className="min-h-screen bg-[#f8f3ec]">

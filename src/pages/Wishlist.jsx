@@ -1,33 +1,48 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { fetchWishlist, removeFromWishlist } from "../redux/slices/wishlistSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
-
 import { addToCart } from "../redux/slices/cartSlice";
-import { removeFromWishlist } from "../redux/slices/wishlistSlice";
 
 function Wishlist() {
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchWishlist());
+  }, [dispatch]);
 
   const wishlistItems = useSelector(
     (state) => state.wishlist.items
   );
 
-  // Remove product after confirmation
-  const handleRemove = (product) => {
-    const productName = product.name || product.title || "this product";
+
+  const handleRemove = async (product) => {
+    const productName = product.name || "this product";
 
     const confirmed = window.confirm(
       `Are you sure you want to remove "${productName}" from your wishlist?`
     );
 
-    if (confirmed) {
-      dispatch(removeFromWishlist(product.id));
+    if (!confirmed) return;
+
+    try {
+      await dispatch(
+        removeFromWishlist(product.id)
+      ).unwrap();
+
       toast.success("Product removed from wishlist!");
+
+    } catch (error) {
+      toast.error(
+        typeof error === "string"
+          ? error
+          : "Failed to remove product"
+      );
     }
   };
 
-  // Add product to cart
+
   const handleAddToCart = (product) => {
     if (Number(product.stock) <= 0) {
       toast.error("Sorry, this product is out of stock.");
@@ -101,7 +116,7 @@ function Wishlist() {
                     key={product.id}
                     className="group"
                   >
-                    {/* Product Image */}
+
                     <div className="relative aspect-[3/4] overflow-hidden bg-[#eee6dc]">
                       <Link to={`/products/${product.id}`}>
                         <img
@@ -111,7 +126,6 @@ function Wishlist() {
                         />
                       </Link>
 
-                      {/* Remove Button */}
                       <button
                         onClick={() => handleRemove(product)}
                         className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-[#fffdf9]/90 text-lg text-[#6b3f22] transition hover:bg-[#6b3f22] hover:text-white"
@@ -122,7 +136,6 @@ function Wishlist() {
                       </button>
                     </div>
 
-                    {/* Product Details */}
                     <div className="pt-4">
                       <Link to={`/products/${product.id}`}>
                         <h3 className="text-sm text-[#3d2415] hover:text-[#8b5e3c]">
@@ -134,7 +147,6 @@ function Wishlist() {
                         ₹{product.price}
                       </p>
 
-                      {/* Stock Status */}
                       {Number(product.stock) > 0 ? (
                         <p className="mt-1 text-xs text-green-700">
                           In Stock
@@ -145,7 +157,6 @@ function Wishlist() {
                         </p>
                       )}
 
-                      {/* Add to Cart */}
                       <button
                         onClick={() => handleAddToCart(product)}
                         disabled={Number(product.stock) <= 0}

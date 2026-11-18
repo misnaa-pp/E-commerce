@@ -2,12 +2,8 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
-
 import { addToCart } from "../redux/slices/cartSlice";
-import {
-  addToWishlist,
-  removeFromWishlist,
-} from "../redux/slices/wishlistSlice";
+import {addToWishlist,removeFromWishlist,} from "../redux/slices/wishlistSlice";
 
 function ProductCard({ product }) {
   const dispatch = useDispatch();
@@ -38,7 +34,6 @@ function ProductCard({ product }) {
     product.image ||
     product.images;
 
-  // ADD TO CART
   const handleAddToCart = () => {
     if (stock <= 0) {
       toast.error("This product is out of stock");
@@ -60,21 +55,35 @@ function ProductCard({ product }) {
     toast.success(`${productName} added to cart`);
   };
 
-  // ADD / REMOVE WISHLIST
-  const handleWishlist = () => {
-    if (isWishlisted) {
-      dispatch(removeFromWishlist(product.id));
-      toast.success("Removed from wishlist");
-    } else {
-      dispatch(addToWishlist(product));
-      toast.success("Added to wishlist");
+  
+const handleWishlist = async () => {
+    try {
+        if (isWishlisted) {
+            await dispatch(
+                removeFromWishlist(product.id)
+            ).unwrap();
+
+            toast.success("Removed from wishlist");
+        } else {
+            await dispatch(
+                addToWishlist(product)
+            ).unwrap();
+
+            toast.success("Added to wishlist");
+        }
+    } catch (error) {
+        toast.error(
+            typeof error === "string"
+                ? error
+                : "Wishlist operation failed"
+        );
     }
-  };
+};
 
   return (
     <article className="group">
 
-      {/* PRODUCT IMAGE */}
+  
       <div className="relative overflow-hidden bg-[#eee6dc]">
 
         <Link to={`/products/${product.id}`}>
@@ -85,7 +94,6 @@ function ProductCard({ product }) {
           />
         </Link>
 
-        {/* WISHLIST BUTTON */}
         <button
           type="button"
           onClick={handleWishlist}
@@ -101,7 +109,6 @@ function ProductCard({ product }) {
 
       </div>
 
-      {/* PRODUCT INFORMATION */}
       <div className="pt-4">
 
         <Link to={`/products/${product.id}`}>
@@ -120,7 +127,6 @@ function ProductCard({ product }) {
             : "Out of stock"}
         </p>
 
-        {/* ADD TO CART BUTTON */}
         <button
           type="button"
           onClick={handleAddToCart}

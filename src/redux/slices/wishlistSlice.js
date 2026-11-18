@@ -1,41 +1,87 @@
-import { createSlice } from "@reduxjs/toolkit";
+
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+
+import {
+    getWishlist as getWishlistService,
+    addWishlistItem,
+    removeWishlistItem
+} from "../../services/wishlistService";
+
+export const fetchWishlist = createAsyncThunk(
+    "wishlist/fetchWishlist",
+    async () => {
+        return await getWishlistService();
+    }
+);
+
+export const addToWishlist = createAsyncThunk(
+    "wishlist/addToWishlist",
+    async (product) => {
+        await addWishlistItem(product.id);
+        return product;
+    }
+);
+
+export const removeFromWishlist = createAsyncThunk(
+    "wishlist/removeFromWishlist",
+    async (productId) => {
+        await removeWishlistItem(productId);
+        return productId;
+    }
+);
 
 const wishlistSlice = createSlice({
-  name: "wishlist",
+    name: "wishlist",
 
-  initialState: {
-    items: [],
-  },
-
-  reducers: {
-    addToWishlist: (state, action) => {
-      const product = action.payload;
-
-      const alreadyExists = state.items.some(
-        (item) => item.id === product.id
-      );
-
-      if (!alreadyExists) {
-        state.items.push(product);
-      }
+    initialState: {
+        items: [],
+        loading: false,
+        error: null
     },
 
-    removeFromWishlist: (state, action) => {
-      state.items = state.items.filter(
-        (item) => item.id !== action.payload
-      );
+    reducers: {
+        clearWishlist: (state) => {
+            state.items = [];
+        }
     },
 
-    clearWishlist: (state) => {
-      state.items = [];
-    },
-  },
+    extraReducers: (builder) => {
+        builder
+
+            
+            .addCase(fetchWishlist.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+
+            .addCase(fetchWishlist.fulfilled, (state, action) => {
+                state.loading = false;
+                state.items = action.payload;
+            })
+
+            .addCase(fetchWishlist.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            })
+
+            .addCase(addToWishlist.fulfilled, (state, action) => {
+                const exists = state.items.some(
+                    item => item.id === action.payload.id
+                );
+
+                if (!exists) {
+                    state.items.push(action.payload);
+                }
+            })
+
+            .addCase(removeFromWishlist.fulfilled, (state, action) => {
+                state.items = state.items.filter(
+                    item => item.id !== action.payload
+                );
+            });
+    }
 });
 
-export const {
-  addToWishlist,
-  removeFromWishlist,
-  clearWishlist,
-} = wishlistSlice.actions;
+export const { clearWishlist } = wishlistSlice.actions;
 
 export default wishlistSlice.reducer;
