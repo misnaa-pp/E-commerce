@@ -8,26 +8,32 @@ function Products() {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState("");
+  const [appliedSearch, setAppliedSearch] = useState("");
+  const [pageNumber, setPageNumber] = useState(1);
 
+  const pageSize = 8;
   const categoryFromUrl = searchParams.get("category");
 
-  const { products, loading, error } = useSelector(
-    (state) => state.products
-  );
-
+  const {
+    products,
+    loading,
+    error,
+    totalCount,
+    totalPages
+  } = useSelector((state) => state.products);
   const [visibleCount, setVisibleCount] = useState(8);
 
   const filteredProducts = products.filter((product) => {
-  const matchesCategory =
-    !categoryFromUrl ||
-    categoryFromUrl === "all" ||
-    product.category?.toLowerCase() === categoryFromUrl.toLowerCase();
+    const matchesCategory =
+      !categoryFromUrl ||
+      categoryFromUrl === "all" ||
+      product.category?.toLowerCase() === categoryFromUrl.toLowerCase();
 
-  const matchesSearch =
-    product.name?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch =
+      product.name?.toLowerCase().includes(searchTerm.toLowerCase());
 
-  return matchesCategory && matchesSearch;
-});
+    return matchesCategory && matchesSearch;
+  });
 
   const visibleProducts = filteredProducts.slice(0, visibleCount);
 
@@ -53,11 +59,29 @@ function Products() {
     };
   }, [visibleCount, filteredProducts.length]);
 
+
   useEffect(() => {
-    dispatch(fetchProducts());
-  }, [dispatch]);
+    dispatch(fetchProducts({
+      search: appliedSearch,
+      category:
+        categoryFromUrl && categoryFromUrl !== "all"
+          ? categoryFromUrl
+          : undefined,
+      pageNumber,
+      pageSize
+    }));
+  }, [dispatch, appliedSearch, categoryFromUrl, pageNumber]);
+
+
+
+  const handleSearch = () => {
+    setPageNumber(1);
+    setAppliedSearch(searchTerm.trim());
+  };
 
   const handleCategoryChange = (category) => {
+    setPageNumber(1);
+
     if (category === "all") {
       setSearchParams({});
     } else {
@@ -89,28 +113,25 @@ function Products() {
       <section className="px-6 pb-10 pt-14 text-center sm:px-10 lg:px-16">
 
         <div className="mx-auto mb-6 flex max-w-7xl justify-end px-6">
-  <div className="flex w-full max-w-sm">
+          <div className="flex w-full max-w-sm">
 
-    <input
-      type="text"
-      placeholder="Search products..."
-      value={searchTerm}
-      onChange={(e) => {
-        setSearchTerm(e.target.value);
-        setVisibleCount(8);
-      }}
-      className="w-full border border-[#cbbcaf] bg-transparent px-4 py-2 text-sm text-[#3d2415] outline-none placeholder:text-[#9b897b] focus:border-[#765039]"
-    />
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full border border-[#cbbcaf] bg-transparent px-4 py-2 text-sm text-[#3d2415] outline-none placeholder:text-[#9b897b] focus:border-[#765039]"
+            />
 
-    <button
-      onClick={() => setVisibleCount(8)}
-      className="bg-[#3d2415] px-5 py-2 text-xs tracking-wider text-white transition hover:bg-[#765039]"
-    >
-      SEARCH
-    </button>
+            <button
+              onClick={() => setVisibleCount(8)}
+              className="bg-[#3d2415] px-5 py-2 text-xs tracking-wider text-white transition hover:bg-[#765039]"
+            >
+              SEARCH
+            </button>
 
-  </div>
-</div>
+          </div>
+        </div>
         <p className="text-sm tracking-[0.3em] text-[#765039]">
           INARAH COLLECTIONS
         </p>
@@ -121,7 +142,7 @@ function Products() {
           <div className="flex gap-6 text-xs tracking-wider text-[#765e4e]">
 
             <button
-              onClick={() => handleCategoryChange("all")}
+              onClick={handleSearch}
               className={
                 !categoryFromUrl
                   ? "text-[#3d2415]"
@@ -130,7 +151,7 @@ function Products() {
             </button>
 
             <button
-              onClick={() => handleCategoryChange("girls")}
+              onClick={handleSearch}
               className={
                 categoryFromUrl === "girls"
                   ? "text-[#3d2415]"
@@ -139,7 +160,7 @@ function Products() {
             </button>
 
             <button
-              onClick={() => handleCategoryChange("boys")}
+              onClick={handleSearch}
               className={
                 categoryFromUrl === "boys"
                   ? "text-[#3d2415]"
@@ -148,7 +169,7 @@ function Products() {
             </button>
 
             <button
-              onClick={() => handleCategoryChange("kids")}
+              onClick={handleSearch}
               className={
                 categoryFromUrl === "kids"
                   ? "text-[#3d2415]"
@@ -159,7 +180,7 @@ function Products() {
           </div>
 
           <p className="hidden text-xs text-[#8a7565] sm:block">
-            {filteredProducts.length} PRODUCTS
+            {totalCount} PRODUCTS
           </p>
 
         </div>
@@ -167,7 +188,7 @@ function Products() {
 
       <section className="mx-auto max-w-7xl px-6 py-12 sm:px-10 lg:px-16">
 
-        {visibleProducts.length === 0 ? (
+        {products.length === 0 ? (
           <div className="py-20 text-center">
             <p className="text-[#765e4e]">
               No products available.
@@ -175,14 +196,12 @@ function Products() {
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 lg:grid-cols-4 lg:gap-x-6">
-
-            {visibleProducts.map((product) => (
+            {products.map((product) => (
               <ProductCard
                 key={product.id}
                 product={product}
               />
             ))}
-
           </div>
         )}
 
@@ -193,6 +212,34 @@ function Products() {
             </p>
           </div>
         )}
+
+
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-6 py-10">
+
+            <button
+              disabled={pageNumber === 1 || loading}
+              onClick={() => setPageNumber(prev => prev - 1)}
+              className="text-sm text-[#765e4e] disabled:opacity-30"
+            >
+              PREVIOUS
+            </button>
+
+            <span className="text-sm text-[#3d2415]">
+              Page {pageNumber} of {totalPages}
+            </span>
+
+            <button
+              disabled={pageNumber === totalPages || loading}
+              onClick={() => setPageNumber(prev => prev + 1)}
+              className="text-sm text-[#765e4e] disabled:opacity-30"
+            >
+              NEXT
+            </button>
+
+          </div>
+        )}
+
 
       </section>
 

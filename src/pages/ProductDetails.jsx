@@ -39,14 +39,15 @@ function ProductDetails() {
   );
 
   const [quantity, setQuantity] = useState(1);
+  const [selectedImage, setSelectedImage] = useState(0);
 
-  // FETCH PRODUCT DETAILS
+
   useEffect(() => {
     dispatch(fetchProductById(id));
     setQuantity(1);
   }, [dispatch, id]);
 
-  // LOADING
+
   if (loading) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#f8f3ec]">
@@ -57,7 +58,7 @@ function ProductDetails() {
     );
   }
 
-  // PRODUCT NOT FOUND
+
   if (error || !selectedProduct) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-[#f8f3ec]">
@@ -82,12 +83,12 @@ function ProductDetails() {
   const productName =
     product.name || product.title || "Product";
 
-  const productImage =
-    product.image ||
-    product.images?.[0] ||
-    product.images;
+  const productImages = product.images || [];
 
-  // EXISTING CART QUANTITY
+  const productImage =
+    productImages[selectedImage] || product.image || "";
+
+
   const cartItem = cartItems.find(
     (item) => item.id === product.id
   );
@@ -99,12 +100,10 @@ function ProductDetails() {
     stock - cartQuantity
   );
 
-  // WISHLIST STATUS
   const isWishlisted = wishlistItems.some(
     (item) => item.id === product.id
   );
 
-  // INCREASE QUANTITY
   const increaseQuantity = () => {
     if (quantity < stock) {
       setQuantity((prev) => prev + 1);
@@ -113,14 +112,12 @@ function ProductDetails() {
     }
   };
 
-  // DECREASE QUANTITY
   const decreaseQuantity = () => {
     if (quantity > 1) {
       setQuantity((prev) => prev - 1);
     }
   };
 
-  // ADD TO CART
   const handleAddToCart = () => {
     if (stock <= 0) {
       toast.error("This product is out of stock");
@@ -147,7 +144,7 @@ function ProductDetails() {
     setQuantity(1);
   };
 
-  // BUY NOW
+
   const handleBuyNow = () => {
     if (stock <= 0) {
       toast.error("This product is out of stock");
@@ -170,7 +167,6 @@ function ProductDetails() {
     });
   };
 
-  // ADD / REMOVE WISHLIST
   const handleWishlist = () => {
     if (isWishlisted) {
       dispatch(removeFromWishlist(product.id));
@@ -184,7 +180,6 @@ function ProductDetails() {
   return (
     <main className="min-h-screen bg-[#f8f3ec]">
 
-      {/* BREADCRUMB */}
       <div className="mx-auto max-w-7xl px-6 pt-8 sm:px-10 lg:px-16">
         <Link
           to="/products"
@@ -194,39 +189,64 @@ function ProductDetails() {
         </Link>
       </div>
 
-      {/* PRODUCT DETAILS */}
       <section className="mx-auto max-w-7xl px-6 py-10 sm:px-10 lg:px-16 lg:py-16">
 
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-20">
 
-          {/* PRODUCT IMAGE WITH WISHLIST */}
-          <div className="relative bg-[#eee6dc]">
 
-            <div className="aspect-[4/5] overflow-hidden">
-              <img
-                src={productImage}
-                alt={productName}
-                className="h-full w-full object-cover"
-              />
+          <div>
+
+            <div className="relative bg-[#eee6dc]">
+
+              <div className="aspect-[4/5] overflow-hidden">
+                <img
+                  src={productImage}
+                  alt={productName}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+
+              <button
+                type="button"
+                onClick={handleWishlist}
+                aria-label={
+                  isWishlisted
+                    ? "Remove from wishlist"
+                    : "Add to wishlist"
+                }
+                className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-[#fffdf9]/90 text-2xl text-[#6b3f22] shadow-md"
+              >
+                {isWishlisted ? "♥" : "♡"}
+              </button>
+
             </div>
 
-            {/* WISHLIST HEART ICON */}
-            <button
-              type="button"
-              onClick={handleWishlist}
-              aria-label={
-                isWishlisted
-                  ? "Remove from wishlist"
-                  : "Add to wishlist"
-              }
-              className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-[#fffdf9]/90 text-2xl text-[#6b3f22] shadow-md transition hover:bg-[#6b3f22] hover:text-white"
-            >
-              {isWishlisted ? "♥" : "♡"}
-            </button>
+            {productImages.length > 1 && (
+              <div className="mt-4 flex gap-3 overflow-x-auto">
+
+                {productImages.map((image, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => setSelectedImage(index)}
+                    className={`h-20 w-16 shrink-0 overflow-hidden border-2 ${selectedImage === index
+                        ? "border-[#6b3f22]"
+                        : "border-transparent"
+                      }`}
+                  >
+                    <img
+                      src={image}
+                      alt={`${productName} ${index + 1}`}
+                      className="h-full w-full object-cover"
+                    />
+                  </button>
+                ))}
+
+              </div>
+            )}
 
           </div>
 
-          {/* PRODUCT INFORMATION */}
           <div className="flex flex-col justify-center">
 
             <p className="text-xs tracking-[0.25em] text-[#765039]">
@@ -237,26 +257,65 @@ function ProductDetails() {
               {productName}
             </h1>
 
-            <p className="mt-5 text-lg text-[#765e4e]">
-              ₹{product.price}
-            </p>
+
+            <div className="mt-5 flex items-center gap-3">
+
+              <span className="text-lg text-[#765e4e]">
+                ₹{product.price}
+              </span>
+
+              {product.originalPrice > product.price && (
+                <>
+                  <span className="text-sm text-gray-400 line-through">
+                    ₹{product.originalPrice}
+                  </span>
+
+                  <span className="text-sm text-green-700">
+                    {product.discount}% OFF
+                  </span>
+                </>
+              )}
+
+            </div>
+
 
             <div className="my-7 border-t border-[#e5ded4]" />
 
-            {/* DESCRIPTION */}
             <p className="max-w-lg text-sm leading-7 text-[#765e4e]">
               {product.description ||
                 "Thoughtfully selected for little ones, with comfort, quality and everyday adventures in mind."}
             </p>
 
-            {/* STOCK INFORMATION */}
+
+            {product.sizes?.length > 0 && (
+              <div className="mt-7">
+
+                <p className="mb-3 text-xs tracking-widest text-[#765e4e]">
+                  AVAILABLE SIZES
+                </p>
+
+                <div className="flex flex-wrap gap-3">
+
+                  {product.sizes.map((size, index) => (
+                    <span
+                      key={index}
+                      className="border border-[#d8cabc] px-5 py-3 text-sm text-[#6b3f22]"
+                    >
+                      {size}
+                    </span>
+                  ))}
+
+                </div>
+
+              </div>
+            )}
+
             <p className="mt-5 text-xs tracking-wide text-[#8a7565]">
               {stock > 0
                 ? `${stock} available`
                 : "Out of stock"}
             </p>
 
-            {/* QUANTITY SELECTOR */}
             {stock > 0 && (
               <div className="mt-7">
 
@@ -292,7 +351,6 @@ function ProductDetails() {
               </div>
             )}
 
-            {/* ADD TO CART BUTTON */}
             <button
               type="button"
               onClick={handleAddToCart}
@@ -304,11 +362,10 @@ function ProductDetails() {
               {stock <= 0
                 ? "OUT OF STOCK"
                 : remainingStock === 0
-                ? "MAXIMUM STOCK IN CART"
-                : "ADD TO CART"}
+                  ? "MAXIMUM STOCK IN CART"
+                  : "ADD TO CART"}
             </button>
 
-            {/* BUY NOW BUTTON */}
             <button
               type="button"
               onClick={handleBuyNow}
@@ -318,7 +375,6 @@ function ProductDetails() {
               BUY NOW
             </button>
 
-            {/* PRODUCT DETAILS INFORMATION */}
             <div className="mt-10 border-t border-[#e5ded4]">
 
               <div className="border-b border-[#e5ded4] py-5">
