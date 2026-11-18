@@ -1,17 +1,19 @@
 
-import React from "react";
+
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  removeFromCart,
-  increaseQuantity,
-  decreaseQuantity,
-} from "../redux/slices/cartSlice";
+import {fetchCart,removeFromCart,updateCartQuantity} from "../redux/slices/cartSlice";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
+
 function Cart() {
   const dispatch = useDispatch();
-  const cartItems = useSelector((state) => state.cart.items);
+  const { items: cartItems, loading } = useSelector((state) => state.cart);
+
+  useEffect(() => {
+    dispatch(fetchCart());
+}, [dispatch]);
 
   const subtotal = cartItems.reduce(
     (total, item) =>
@@ -22,41 +24,89 @@ function Cart() {
   const shipping = subtotal >= 1000 ? 0 : 50;
   const total = subtotal + shipping;
 
-  // Remove product with confirmation
-  const handleRemove = (item) => {
-    const productName = item.name || item.title || "this product";
+
+  
+const handleRemove = async (item) => {
+    const productName = item.name || "this product";
 
     const confirmed = window.confirm(
-      `Are you sure you want to remove ${productName} from your cart?`
+        `Are you sure you want to remove ${productName} from your cart?`
     );
 
-    if (confirmed) {
-      dispatch(removeFromCart(item.id));
-      toast.success("Product removed from cart");
-    }
-  };
+    if (!confirmed) return;
 
-  // Increase quantity with stock validation
-  const handleIncrease = (item) => {
+    try {
+        await dispatch(
+            removeFromCart(item.id)
+        ).unwrap();
+
+        toast.success("Product removed from cart");
+
+    } catch (error) {
+        toast.error(
+            typeof error === "string"
+                ? error
+                : "Failed to remove product"
+        );
+    }
+};
+
+
+  
+const handleIncrease = async (item) => {
     if (item.quantity >= item.stock) {
-      toast.error(`Only ${item.stock} items available in stock`);
-      return;
+        toast.error(
+            `Only ${item.stock} items available in stock`
+        );
+        return;
     }
 
-    dispatch(increaseQuantity(item.id));
-    toast.success("Quantity increased");
-  };
+    try {
+        await dispatch(
+            updateCartQuantity({
+                id: item.id,
+                quantity: item.quantity + 1
+            })
+        ).unwrap();
 
-  // Decrease quantity
-  const handleDecrease = (item) => {
+        toast.success("Quantity increased");
+
+    } catch (error) {
+        toast.error(
+            typeof error === "string"
+                ? error
+                : "Failed to update quantity"
+        );
+    }
+};
+
+
+  
+const handleDecrease = async (item) => {
     if (item.quantity <= 1) {
-      toast.error("Minimum quantity is 1");
-      return;
+        toast.error("Minimum quantity is 1");
+        return;
     }
 
-    dispatch(decreaseQuantity(item.id));
-    toast.success("Quantity decreased");
-  };
+    try {
+        await dispatch(
+            updateCartQuantity({
+                id: item.id,
+                quantity: item.quantity - 1
+            })
+        ).unwrap();
+
+        toast.success("Quantity decreased");
+
+    } catch (error) {
+        toast.error(
+            typeof error === "string"
+                ? error
+                : "Failed to update quantity"
+        );
+    }
+};
+
 
   return (
     <main className="min-h-screen bg-[#f8f3ec]">

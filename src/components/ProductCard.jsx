@@ -34,26 +34,37 @@ function ProductCard({ product }) {
     product.image ||
     product.images;
 
-  const handleAddToCart = () => {
+  
+const handleAddToCart = async () => {
     if (stock <= 0) {
-      toast.error("This product is out of stock");
-      return;
+        toast.error("This product is out of stock");
+        return;
     }
 
     if (cartItem && cartItem.quantity >= stock) {
-      toast.error(`Only ${stock} item(s) available`);
-      return;
+        toast.error(`Only ${stock} item(s) available`);
+        return;
     }
 
-    dispatch(
-      addToCart({
-        ...product,
-        quantity: 1,
-      })
-    );
+    try {
+        await dispatch(
+            addToCart({
+                ...product,
+                quantity: 1
+            })
+        ).unwrap();
 
-    toast.success(`${productName} added to cart`);
-  };
+        toast.success(`${productName} added to cart`);
+
+    } catch (error) {
+        toast.error(
+            typeof error === "string"
+                ? error
+                : "Failed to add product to cart"
+        );
+    }
+};
+
 
   
 const handleWishlist = async () => {

@@ -43,21 +43,32 @@ function Wishlist() {
   };
 
 
-  const handleAddToCart = (product) => {
+  
+const handleAddToCart = async (product) => {
     if (Number(product.stock) <= 0) {
-      toast.error("Sorry, this product is out of stock.");
-      return;
+        toast.error("Sorry, this product is out of stock.");
+        return;
     }
 
-    dispatch(
-      addToCart({
-        ...product,
-        quantity: 1,
-      })
-    );
+    try {
+        await dispatch(
+            addToCart({
+                ...product,
+                quantity: 1
+            })
+        ).unwrap();
 
-    toast.success("Product added to cart!");
-  };
+        toast.success("Product added to cart!");
+
+    } catch (error) {
+        toast.error(
+            typeof error === "string"
+                ? error
+                : "Failed to add product to cart"
+        );
+    }
+};
+
 
   return (
     <main className="min-h-screen bg-[#f8f3ec]">

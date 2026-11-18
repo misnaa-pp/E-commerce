@@ -1,89 +1,104 @@
 
-import { createSlice } from "@reduxjs/toolkit";
+
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+
+import {
+    getCart as getCartService,
+    addCartItem,
+    updateCartItem,
+    removeCartItem
+} from "../../services/cartService";
+
+export const fetchCart = createAsyncThunk(
+    "cart/fetchCart",
+    async () => {
+        return await getCartService();
+    }
+);
+
+export const addToCart = createAsyncThunk(
+    "cart/addToCart",
+    async (product) => {
+        await addCartItem(
+            product.id,
+            product.quantity || 1
+        );
+
+        return await getCartService();
+    }
+);
+
+export const updateCartQuantity = createAsyncThunk(
+    "cart/updateQuantity",
+    async ({ id, quantity }) => {
+        await updateCartItem(id, quantity);
+
+        return await getCartService();
+    }
+);
+
+export const removeFromCart = createAsyncThunk(
+    "cart/removeFromCart",
+    async (productId) => {
+        await removeCartItem(productId);
+
+        return productId;
+    }
+);
 
 const cartSlice = createSlice({
-  name: "cart",
+    name: "cart",
 
-  initialState: {
-    items: [],
-  },
-
-  reducers: {
-    // ADD PRODUCT TO CART
-    addToCart: (state, action) => {
-      const product = action.payload;
-
-      const stock = Number(product.stock) || 0;
-      const requestedQuantity = Math.max(
-        1,
-        Number(product.quantity) || 1
-      );
-
-      // Prevent adding out-of-stock products
-      if (stock <= 0) return;
-
-      const existingItem = state.items.find(
-        (item) => item.id === product.id
-      );
-
-      if (existingItem) {
-        existingItem.stock = stock;
-
-        existingItem.quantity = Math.min(
-          existingItem.quantity + requestedQuantity,
-          stock
-        );
-      } else {
-        state.items.push({
-          ...product,
-          quantity: Math.min(requestedQuantity, stock),
-          stock,
-        });
-      }
+    initialState: {
+        items: [],
+        loading: false,
+        error: null
     },
 
-    // REMOVE PRODUCT FROM CART
-    removeFromCart: (state, action) => {
-      state.items = state.items.filter(
-        (item) => item.id !== action.payload
-      );
+    reducers: {
+        clearCart: (state) => {
+            state.items = [];
+        }
     },
 
-    // INCREASE QUANTITY
-    increaseQuantity: (state, action) => {
-      const item = state.items.find(
-        (item) => item.id === action.payload
-      );
+    extraReducers: (builder) => {
+        builder
 
-      if (item && item.quantity < item.stock) {
-        item.quantity += 1;
-      }
-    },
+            // Fetch cart
+            .addCase(fetchCart.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
 
-    // DECREASE QUANTITY
-    decreaseQuantity: (state, action) => {
-      const item = state.items.find(
-        (item) => item.id === action.payload
-      );
+            .addCase(fetchCart.fulfilled, (state, action) => {
+                state.loading = false;
+                state.items = action.payload;
+            })
 
-      if (item && item.quantity > 1) {
-        item.quantity -= 1;
-      }
-    },
+            .addCase(fetchCart.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            })
 
-    // CLEAR CART
-    clearCart: (state) => {
-      state.items = [];
-    },
-  },
+            // Add product
+            .addCase(addToCart.fulfilled, (state, action) => {
+                state.items = action.payload;
+            })
+
+            // Update quantity
+            .addCase(updateCartQuantity.fulfilled, (state, action) => {
+                state.items = action.payload;
+            })
+
+            // Remove product
+            .addCase(removeFromCart.fulfilled, (state, action) => {
+                state.items = state.items.filter(
+                    item => item.id !== action.payload
+                );
+            });
+    }
 });
 
-export const {
-  addToCart,
-  removeFromCart,
-  increaseQuantity,
-  decreaseQuantity,
-  clearCart,
-} = cartSlice.actions;
+export const { clearCart } = cartSlice.actions;
 
 export default cartSlice.reducer;

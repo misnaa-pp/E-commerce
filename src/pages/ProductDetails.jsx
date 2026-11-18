@@ -108,31 +108,41 @@ function ProductDetails() {
     }
   };
 
-  const handleAddToCart = () => {
+  
+const handleAddToCart = async () => {
     if (stock <= 0) {
-      toast.error("This product is out of stock");
-      return;
+        toast.error("This product is out of stock");
+        return;
     }
 
     if (quantity > remainingStock) {
-      toast.error(
-        `Only ${remainingStock} more item(s) can be added`
-      );
-      return;
+        toast.error(
+            `Only ${remainingStock} more item(s) can be added`
+        );
+        return;
     }
 
-    dispatch(
-      addToCart({
-        ...product,
-        quantity,
-        stock,
-      })
-    );
+    try {
+        await dispatch(
+            addToCart({
+                ...product,
+                quantity,
+                stock
+            })
+        ).unwrap();
 
-    toast.success(`${productName} added to cart`);
+        toast.success(`${productName} added to cart`);
 
-    setQuantity(1);
-  };
+        setQuantity(1);
+
+    } catch (error) {
+        toast.error(
+            typeof error === "string"
+                ? error
+                : "Failed to add product to cart"
+        );
+    }
+};
 
 
   const handleBuyNow = () => {
