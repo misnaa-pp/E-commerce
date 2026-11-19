@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
+
 import {
   fetchOrders,
   cancelOrder,
@@ -20,29 +21,42 @@ function Orders() {
     dispatch(fetchOrders());
   }, [dispatch]);
 
-  const getProductImage = (item) => {
-    if (Array.isArray(item.images)) {
-      return item.images[0] || item.image || "";
+  // Convert backend image URL into a usable image URL
+  const getProductImage = (imageUrl) => {
+    if (!imageUrl) return "";
+
+    if (imageUrl.startsWith("http")) {
+      return imageUrl;
     }
 
-    return item.images || item.image || "";
+    const apiUrl = import.meta.env.VITE_API_URL.replace(/\/api\/?$/, "");
+
+    return `${apiUrl}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
   };
 
+  // Cancel order
   const handleCancelOrder = async (order) => {
     const confirmed = window.confirm(
-      `Are you sure you want to cancel Order #${order.id}?`
+      `Are you sure you want to cancel Order #${order.orderId}?`
     );
 
     if (!confirmed) return;
 
     try {
-      setCancellingId(order.id);
+      setCancellingId(order.orderId);
 
-      await dispatch(cancelOrder(order)).unwrap();
+      await dispatch(cancelOrder(order.orderId)).unwrap();
 
       toast.success("Your order has been cancelled successfully!");
+
+      dispatch(fetchOrders());
     } catch (error) {
-      toast.error("Unable to cancel the order. Please try again.");
+      console.error("Cancel order failed:", error);
+      toast.error(
+        typeof error === "string"
+          ? error
+          : "Unable to cancel the order. Please try again."
+      );
     } finally {
       setCancellingId(null);
     }
@@ -132,12 +146,12 @@ function Orders() {
 
             {orders.map((order) => {
               const isPending =
-                String(order.status || "Pending").toLowerCase() ===
+                String(order.orderStatus || "").toLowerCase() ===
                 "pending";
 
               return (
                 <div
-                  key={order.id}
+                  key={order.orderId}
                   className="border border-[#e5ded4] bg-[#fffdf9] p-6 sm:p-8"
                 >
 
@@ -146,18 +160,25 @@ function Orders() {
 
                     <div>
                       <p className="text-xs tracking-wider text-[#8a7565]">
-                        ORDER #{order.id}
+                        ORDER #{order.orderId}
                       </p>
 
                       <p className="mt-1 text-sm text-[#765e4e]">
-                        {order.createdAt
-                          ? new Date(order.createdAt).toLocaleDateString()
-                          : order.date || "Date unavailable"}
+                        {order.orderDate
+                          ? new Date(order.orderDate).toLocaleDateString(
+                              "en-IN",
+                              {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                              }
+                            )
+                          : "Date unavailable"}
                       </p>
                     </div>
 
                     <span className="w-fit border border-[#b8a28f] px-3 py-1 text-[10px] tracking-widest text-[#6b3f22]">
-                      {order.status?.toUpperCase() || "PENDING"}
+                      {order.orderStatus?.toUpperCase() || "PENDING"}
                     </span>
 
                   </div>
@@ -167,17 +188,20 @@ function Orders() {
 
                     {order.items?.map((item, index) => (
                       <div
-                        key={`${item.id}-${index}`}
+                        key={`${item.productId}-${index}`}
                         className="flex gap-4 py-5"
                       >
 
                         <div className="h-24 w-20 shrink-0 overflow-hidden bg-[#eee6dc] sm:h-28 sm:w-24">
 
-                          {getProductImage(item) ? (
+                          {item.imageUrl ? (
                             <img
-                              src={getProductImage(item)}
-                              alt={item.title || item.name}
+                              src={getProductImage(item.imageUrl)}
+                              alt={item.productName}
                               className="h-full w-full object-cover"
+                              onError={(e) => {
+                                e.currentTarget.style.display = "none";
+                              }}
                             />
                           ) : (
                             <div className="flex h-full items-center justify-center text-xs text-[#8a7565]">
@@ -190,7 +214,7 @@ function Orders() {
                         <div className="flex flex-1 flex-col justify-center">
 
                           <h3 className="text-sm text-[#3d2415]">
-                            {item.title || item.name}
+                            {item.productName}
                           </h3>
 
                           <p className="mt-1 text-xs text-[#8a7565]">
@@ -199,10 +223,7 @@ function Orders() {
 
                           <p className="mt-2 text-sm text-[#765e4e]">
                             ₹
-                            {(
-                              Number(item.price) *
-                              Number(item.quantity)
-                            ).toLocaleString("en-IN")}
+                            {Number(item.subTotal).toLocaleString("en-IN")}
                           </p>
 
                         </div>
@@ -231,7 +252,9 @@ function Orders() {
 
                       <span className="font-medium text-[#3d2415]">
                         Total ₹
-                        {Number(order.total || 0).toLocaleString("en-IN")}
+                        {Number(order.totalAmount || 0).toLocaleString(
+                          "en-IN"
+                        )}
                       </span>
                     </div>
 
@@ -239,7 +262,7 @@ function Orders() {
                     <div className="flex flex-wrap items-center gap-3">
 
                       <Link
-                        to={`/orders/${order.id}`}
+                        to={`/orders/${order.orderId}`}
                         className="inline-flex items-center justify-center border border-[#6b3f22] px-5 py-3 text-[10px] font-medium tracking-[0.15em] text-[#6b3f22] transition hover:bg-[#6b3f22] hover:!text-white"
                       >
                         VIEW DETAILS →
@@ -248,10 +271,10 @@ function Orders() {
                       {isPending && (
                         <button
                           onClick={() => handleCancelOrder(order)}
-                          disabled={cancellingId === order.id}
+                          disabled={cancellingId === order.orderId}
                           className="border border-red-400 px-5 py-3 text-[10px] font-medium tracking-[0.15em] text-red-600 transition hover:bg-red-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                          {cancellingId === order.id
+                          {cancellingId === order.orderId
                             ? "CANCELLING..."
                             : "CANCEL ORDER"}
                         </button>

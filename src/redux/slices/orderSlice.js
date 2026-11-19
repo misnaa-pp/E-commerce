@@ -1,13 +1,12 @@
+
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import {
-  createOrder,
   getOrders,
   getOrderById,
   updateOrder,
+  checkoutOrder,
 } from "../../services/orderService";
-
-// Fetch all orders
 export const fetchOrders = createAsyncThunk(
   "orders/fetchOrders",
   async () => {
@@ -15,7 +14,6 @@ export const fetchOrders = createAsyncThunk(
   }
 );
 
-// Fetch order by ID
 export const fetchOrderById = createAsyncThunk(
   "orders/fetchOrderById",
   async (id) => {
@@ -23,24 +21,17 @@ export const fetchOrderById = createAsyncThunk(
   }
 );
 
-// Place new order
 export const placeOrder = createAsyncThunk(
   "orders/placeOrder",
-  async (orderData) => {
-    return await createOrder(orderData);
+  async (checkoutData) => {
+    return await checkoutOrder(checkoutData);
   }
 );
 
-// Cancel order
 export const cancelOrder = createAsyncThunk(
   "orders/cancelOrder",
-  async (order) => {
-    const updatedOrder = {
-      ...order,
-      status: "Cancelled",
-    };
-
-    return await updateOrder(order.id, updatedOrder);
+  async (id) => {
+    return await updateOrder(id);
   }
 );
 
@@ -63,7 +54,6 @@ const orderSlice = createSlice({
   extraReducers: (builder) => {
     builder
 
-      // Fetch orders
       .addCase(fetchOrders.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -79,7 +69,6 @@ const orderSlice = createSlice({
         state.error = action.error.message;
       })
 
-      // Fetch single order
       .addCase(fetchOrderById.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -95,7 +84,6 @@ const orderSlice = createSlice({
         state.error = action.error.message;
       })
 
-      // Place order
       .addCase(placeOrder.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -111,22 +99,25 @@ const orderSlice = createSlice({
         state.error = action.error.message;
       })
 
-      // Cancel order
       .addCase(cancelOrder.pending, (state) => {
         state.error = null;
       })
 
       .addCase(cancelOrder.fulfilled, (state, action) => {
+        const updatedOrder = action.payload;
+
         const index = state.orders.findIndex(
-          (order) => order.id === action.payload.id
+          (order) => order.orderId === updatedOrder.orderId
         );
 
         if (index !== -1) {
-          state.orders[index] = action.payload;
+          state.orders[index] = updatedOrder;
         }
 
-        if (state.selectedOrder?.id === action.payload.id) {
-          state.selectedOrder = action.payload;
+        if (
+          state.selectedOrder?.orderId === updatedOrder.orderId
+        ) {
+          state.selectedOrder = updatedOrder;
         }
       })
 

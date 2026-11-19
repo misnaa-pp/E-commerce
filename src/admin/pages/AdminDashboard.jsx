@@ -398,10 +398,8 @@ function AdminDashboard() {
 
       </div>
 
-      {/* Recent Orders and Low Stock */}
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
 
-        {/* Recent Orders */}
         <div className="overflow-hidden rounded-2xl border border-[#E9DCCF] bg-white shadow-sm xl:col-span-2">
 
           <div className="flex items-center justify-between border-b border-[#F0E8DF] p-6">

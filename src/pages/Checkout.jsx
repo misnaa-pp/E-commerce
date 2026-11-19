@@ -1,11 +1,14 @@
 
 
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import toast from "react-hot-toast";
+
 import { placeOrder } from "../redux/slices/orderSlice";
 import { clearCart } from "../redux/slices/cartSlice";
+import {getAddresses,addAddress,} from "../services/addressService";
 
 function Checkout() {
   const dispatch = useDispatch();
@@ -13,22 +16,14 @@ function Checkout() {
   const location = useLocation();
 
   const cartItems = useSelector((state) => state.cart.items);
-  const { orders, loading } = useSelector((state) => state.orders);
+  const { loading } = useSelector((state) => state.orders);
 
-  // Product received from Buy Now
+  
   const buyNowItem = location.state?.buyNowItem || null;
-
-  // Determine checkout mode
   const isBuyNowCheckout = Boolean(buyNowItem);
 
-  // Select products based on checkout mode
   const checkoutItems = isBuyNowCheckout
-    ? [
-        {
-          ...buyNowItem,
-          quantity: buyNowItem.quantity || 1,
-        },
-      ]
+    ? [{ ...buyNowItem, quantity: buyNowItem.quantity || 1 }]
     : cartItems;
 
   const [paymentMethod, setPaymentMethod] = useState("cod");
@@ -44,8 +39,58 @@ function Checkout() {
   });
 
   const [errors, setErrors] = useState({});
+  const [savedAddresses, setSavedAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState("");
 
-  // Calculate total based on selected checkout items
+  useEffect(() => {
+    const loadAddresses = async () => {
+      try {
+        const addresses = await getAddresses();
+
+        setSavedAddresses(addresses);
+
+        const defaultAddress = addresses.find(
+          (address) => address.isDefault
+        );
+
+        if (defaultAddress) {
+          setSelectedAddressId(defaultAddress.addressId);
+
+          setFormData((prev) => ({
+            ...prev,
+            name: defaultAddress.fullName,
+            phone: defaultAddress.phone,
+            address: defaultAddress.addressLine,
+            city: defaultAddress.city,
+            state: defaultAddress.state,
+            pincode: defaultAddress.postalCode,
+          }));
+        }
+      } catch (error) {
+        console.error("Address loading failed:", error);
+        toast.error("Failed to load saved addresses.");
+      }
+    };
+
+    loadAddresses();
+  }, []);
+
+  const handleSelectAddress = (address) => {
+    setSelectedAddressId(address.addressId);
+
+    setFormData((prev) => ({
+      ...prev,
+      name: address.fullName,
+      phone: address.phone,
+      address: address.addressLine,
+      city: address.city,
+      state: address.state,
+      pincode: address.postalCode,
+    }));
+
+    setErrors({});
+  };
+
   const subtotal = checkoutItems.reduce(
     (total, item) =>
       total + Number(item.price) * Number(item.quantity),
@@ -55,7 +100,6 @@ function Checkout() {
   const shipping = subtotal >= 1000 ? 0 : 50;
   const total = subtotal + shipping;
 
-  // Validation
   const validateForm = () => {
     const newErrors = {};
 
@@ -88,13 +132,15 @@ function Checkout() {
     if (!phone) {
       newErrors.phone = "Phone number is required.";
     } else if (!phonePattern.test(phone)) {
-      newErrors.phone = "Enter a valid 10-digit Indian mobile number.";
+      newErrors.phone =
+        "Enter a valid 10-digit Indian mobile number.";
     }
 
     if (!address) {
       newErrors.address = "Delivery address is required.";
     } else if (address.length < 5) {
-      newErrors.address = "Address must contain at least 5 characters.";
+      newErrors.address =
+        "Address must contain at least 5 characters.";
     }
 
     if (!city) {
@@ -112,7 +158,8 @@ function Checkout() {
     if (!pincode) {
       newErrors.pincode = "PIN code is required.";
     } else if (!pincodePattern.test(pincode)) {
-      newErrors.pincode = "PIN code must contain exactly 6 digits.";
+      newErrors.pincode =
+        "PIN code must contain exactly 6 digits.";
     }
 
     setErrors(newErrors);
@@ -120,7 +167,6 @@ function Checkout() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -139,60 +185,85 @@ function Checkout() {
       [name]: updatedValue,
     }));
 
+    if (name !== "email") {
+      setSelectedAddressId("");
+    }
+
     setErrors((prev) => ({
       ...prev,
       [name]: "",
     }));
   };
 
-  // Submit order
-  const handleSubmit = async (e) => {
-    e.preventDefault();
 
-    if (checkoutItems.length === 0) {
-      toast.error("No products available for checkout.");
-      return;
-    }
+  
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (!validateForm()) {
-      toast.error("Please correct the highlighted fields.");
-      return;
-    }
+  if (checkoutItems.length === 0) {
+    toast.error("Your cart is empty.");
+    return;
+  }
 
-    const orderData = {
-      customer: {
-        ...formData,
-        name: formData.name.trim(),
-        email: formData.email.trim(),
-        address: formData.address.trim(),
+  if (!validateForm()) {
+    toast.error("Please correct the highlighted fields.");
+    return;
+  }
+
+  try {
+    let addressId = selectedAddressId;
+
+    if (!addressId) {
+      const addressData = {
+        fullName: formData.name.trim(),
+        phone: formData.phone.trim(),
+        addressLine: formData.address.trim(),
         city: formData.city.trim(),
         state: formData.state.trim(),
-      },
-      paymentMethod,
-      items: checkoutItems,
-      subtotal,
-      shipping,
-      total,
-      status: "Pending",
-      createdAt: new Date().toISOString(),
+        postalCode: formData.pincode.trim(),
+        country: "India",
+      };
+
+      const savedAddress = await addAddress(addressData);
+
+      addressId = savedAddress.addressId;
+
+      if (!addressId) {
+        throw new Error("Address was saved but its ID was not returned.");
+      }
+    }
+
+    const checkoutData = {
+      addressId: Number(addressId),
+      paymentMethod:
+        paymentMethod === "cod"
+          ? "CashOnDelivery"
+          : "OnlinePayment",
     };
 
-    try {
-      await dispatch(placeOrder(orderData)).unwrap();
+    await dispatch(placeOrder(checkoutData)).unwrap();
 
-      // Clear cart only for normal cart checkout
-      if (!isBuyNowCheckout) {
-        dispatch(clearCart());
-      }
-
-      toast.success("Your order has been placed successfully!");
-
-      navigate("/orders");
-    } catch (error) {
-      console.error("Order placement failed:", error);
-      toast.error("Failed to place your order. Please try again.");
+    if (!isBuyNowCheckout) {
+      dispatch(clearCart());
     }
-  };
+
+    toast.success("Your order has been placed successfully!");
+
+    navigate("/orders");
+
+  } catch (error) {
+    console.error("Checkout failed:", error);
+
+    const message =
+      error?.response?.data?.message ||
+      error?.response?.data?.title ||
+      error?.message ||
+      "Failed to place your order.";
+
+    toast.error(message);
+  }
+};
+
 
   const inputClass = (field) =>
     `w-full border ${
@@ -251,14 +322,11 @@ function Checkout() {
       </section>
 
       <section className="mx-auto max-w-6xl px-6 pb-24 sm:px-10 lg:px-16">
-
         <form onSubmit={handleSubmit} noValidate>
-
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_380px]">
 
             {/* Delivery Details */}
             <div>
-
               <h2 className="font-serif text-2xl text-[#3d2415]">
                 Delivery Details
               </h2>
@@ -267,6 +335,64 @@ function Checkout() {
                 Please enter your delivery information.
               </p>
 
+              {/* Saved Addresses */}
+              {savedAddresses.length > 0 && (
+                <div className="mt-8">
+                  <h3 className="mb-4 text-sm font-semibold text-[#3d2415]">
+                    SAVED ADDRESSES
+                  </h3>
+
+                  <div className="space-y-3">
+                    {savedAddresses.map((address) => (
+                      <label
+                        key={address.addressId}
+                        className={`block cursor-pointer border p-4 ${
+                          selectedAddressId === address.addressId
+                            ? "border-[#6b3f22] bg-[#fffdf9]"
+                            : "border-[#d8cabc]"
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <input
+                            type="radio"
+                            name="savedAddress"
+                            checked={
+                              selectedAddressId === address.addressId
+                            }
+                            onChange={() =>
+                              handleSelectAddress(address)
+                            }
+                            className="mt-1 accent-[#6b3f22]"
+                          />
+
+                          <div className="text-sm text-[#3d2415]">
+                            <p className="font-semibold">
+                              {address.fullName}
+
+                              {address.isDefault && (
+                                <span className="ml-2 text-xs text-green-700">
+                                  Default
+                                </span>
+                              )}
+                            </p>
+
+                            <p className="mt-1">
+                              {address.phone}
+                            </p>
+
+                            <p className="mt-1 text-[#765e4e]">
+                              {address.addressLine}, {address.city},{" "}
+                              {address.state} - {address.postalCode}
+                            </p>
+                          </div>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Delivery Form */}
               <div className="mt-8 space-y-6">
 
                 {/* Name */}
@@ -290,7 +416,6 @@ function Checkout() {
 
                 {/* Email and Phone */}
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-
                   <div>
                     <label className="mb-2 block text-xs tracking-wider text-[#765e4e]">
                       EMAIL
@@ -328,7 +453,6 @@ function Checkout() {
 
                     <ErrorMessage field="phone" />
                   </div>
-
                 </div>
 
                 {/* Address */}
@@ -352,7 +476,6 @@ function Checkout() {
 
                 {/* City, State, PIN */}
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-
                   <div>
                     <label className="mb-2 block text-xs tracking-wider text-[#765e4e]">
                       CITY
@@ -408,7 +531,6 @@ function Checkout() {
 
                     <ErrorMessage field="pincode" />
                   </div>
-
                 </div>
 
                 {/* Payment */}
@@ -418,7 +540,6 @@ function Checkout() {
                   </h2>
 
                   <div className="mt-5 space-y-4">
-
                     <label className="flex cursor-pointer items-center gap-4 border border-[#d8cabc] bg-[#fffdf9] p-4">
                       <input
                         type="radio"
@@ -464,22 +585,18 @@ function Checkout() {
                         </p>
                       </div>
                     </label>
-
                   </div>
                 </div>
-
               </div>
             </div>
 
             {/* Order Summary */}
             <aside className="h-fit bg-[#E8DDD0] p-7 sm:p-8 lg:sticky lg:top-8">
-
               <h2 className="font-serif text-2xl text-[#3d2415]">
                 Order Summary
               </h2>
 
               <div className="mt-7 space-y-5">
-
                 {checkoutItems.map((item, index) => {
                   const image = Array.isArray(item.images)
                     ? item.images[0]
@@ -490,9 +607,7 @@ function Checkout() {
                       key={`${item.id}-${index}`}
                       className="flex gap-4"
                     >
-
                       <div className="relative h-20 w-16 shrink-0 overflow-hidden bg-[#eee6dc]">
-
                         {image && (
                           <img
                             src={image}
@@ -504,11 +619,9 @@ function Checkout() {
                         <span className="absolute right-1 top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#6b3f22] px-1 text-[10px] text-white">
                           {item.quantity}
                         </span>
-
                       </div>
 
                       <div className="flex flex-1 justify-between gap-3">
-
                         <div>
                           <p className="text-sm text-[#3d2415]">
                             {item.title || item.name}
@@ -520,21 +633,19 @@ function Checkout() {
                         </div>
 
                         <p className="text-sm text-[#765e4e]">
-                          ₹{Number(item.price) * Number(item.quantity)}
+                          ₹
+                          {Number(item.price) *
+                            Number(item.quantity)}
                         </p>
-
                       </div>
-
                     </div>
                   );
                 })}
-
               </div>
 
               <div className="my-7 border-t border-[#cdbdad]" />
 
               <div className="space-y-4 text-sm">
-
                 <div className="flex justify-between text-[#765e4e]">
                   <span>Subtotal</span>
                   <span>₹{subtotal}</span>
@@ -558,7 +669,6 @@ function Checkout() {
                     </span>
                   </div>
                 </div>
-
               </div>
 
               <button
@@ -573,9 +683,7 @@ function Checkout() {
                 By placing your order, you agree to our terms and
                 conditions.
               </p>
-
             </aside>
-
           </div>
         </form>
       </section>
