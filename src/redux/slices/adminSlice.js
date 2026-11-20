@@ -1,95 +1,107 @@
-import {createAsyncThunk,createSlice,} from "@reduxjs/toolkit";
-import { getAdmins } from "../../services/adminService";
+
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  adminLogin as loginAdmin,
+  getAdminProfile
+} from "../../services/adminService";
 
 export const adminLogin = createAsyncThunk(
   "admin/adminLogin",
-  async ({ email, password }) => {
+  async (credentials, { rejectWithValue }) => {
     try {
-      const admins = await getAdmins();
+      // 1. Login and receive JWT tokens
+      const authData = await loginAdmin(credentials);
 
-      const admin = admins.find(
-        (admin) =>
-          admin.email === email &&
-          admin.password === password);
+      // 2. Fetch admin profile using the access token
+      const admin = await getAdminProfile(authData.accessToken);
 
-      if (!admin) {
-        throw new Error(
-          "Invalid admin email or password"
-        );
-      }
-
-      return admin;
+      // 3. Return admin details and tokens
+      return {
+        admin,
+        accessToken: authData.accessToken,
+        refreshToken: authData.refreshToken
+      };
     } catch (error) {
-      throw new Error(
+      return rejectWithValue(
         error.response?.data?.message ||
-          error.message ||
-          "Admin login failed"
+        "Admin login failed"
       );
     }
   }
 );
 
-const savedAdmin = localStorage.getItem("admin");
-
+const savedAdmin = JSON.parse(
+  localStorage.getItem("admin") || "null"
+);
 
 const adminSlice = createSlice({
   name: "admin",
+
   initialState: {
-  admin: savedAdmin
-    ? JSON.parse(savedAdmin)
-    : null,
-  isAuthenticated: !!savedAdmin,
-  loading: false,
-  error: null,
-},
+    admin: savedAdmin?.admin || null,
+    accessToken: savedAdmin?.accessToken || null,
+    refreshToken: savedAdmin?.refreshToken || null,
+    isAuthenticated: !!savedAdmin?.accessToken,
+    loading: false,
+    error: null
+  },
 
   reducers: {
     adminLogout: (state) => {
-      state.admin = null;
-      state.isAuthenticated = false;
-      state.error = null;
+    state.admin = null;
+    state.accessToken = null;
+    state.refreshToken = null;
+    state.isAuthenticated = false;
+    state.error = null;
 
-      localStorage.removeItem("admin");
-    },
+    localStorage.removeItem("admin");
+    localStorage.removeItem("authData");
+},
 
     clearAdminError: (state) => {
       state.error = null;
-    },
+    }
   },
 
   extraReducers: (builder) => {
     builder
-
       .addCase(adminLogin.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
 
-      .addCase(
-        adminLogin.fulfilled,
-        (state, action) => {
-          state.loading = false;
-          state.admin = action.payload;
-          state.isAuthenticated = true;
-          state.error = null;
 
-          localStorage.setItem(
-            "admin",
-            JSON.stringify(action.payload)
-          );
-        }
-      )
+      .addCase(adminLogin.fulfilled, (state, action) => {
+        state.loading = false;
 
-      .addCase(
-        adminLogin.rejected,
-        (state, action) => {
-          state.loading = false;
-          state.error = action.error.message;
-          state.isAuthenticated = false;
-        }
-      );
-  },
+        state.admin = action.payload.admin;
+        state.accessToken = action.payload.accessToken;
+        state.refreshToken = action.payload.refreshToken;
+        state.isAuthenticated = true;
+
+        localStorage.setItem(
+          "authData",
+          JSON.stringify({
+            user: action.payload.admin,
+            accessToken: action.payload.accessToken,
+            refreshToken: action.payload.refreshToken
+          })
+        );
+
+        localStorage.setItem(
+          "admin",
+          JSON.stringify(action.payload)
+        );
+      })
+
+
+      .addCase(adminLogin.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.isAuthenticated = false;
+      });
+  }
 });
 
-export const {adminLogout,clearAdminError,} = adminSlice.actions;
+export const { adminLogout, clearAdminError } = adminSlice.actions;
 export default adminSlice.reducer;

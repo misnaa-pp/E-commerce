@@ -124,7 +124,7 @@ function Products() {
             />
 
             <button
-              onClick={() => setVisibleCount(8)}
+              onClick={handleSearch}
               className="bg-[#3d2415] px-5 py-2 text-xs tracking-wider text-white transition hover:bg-[#765039]"
             >
               SEARCH
@@ -139,45 +139,47 @@ function Products() {
 
       <section className="px-6 py-4">
         <div className="mx-auto flex max-w-7xl items-center justify-between">
+
           <div className="flex gap-6 text-xs tracking-wider text-[#765e4e]">
 
             <button
-              onClick={handleSearch}
-              className={
-                !categoryFromUrl
-                  ? "text-[#3d2415]"
-                  : "hover:text-[#3d2415]"}>
+              onClick={() => handleCategoryChange("all")}
+              className={!categoryFromUrl || categoryFromUrl === "all"
+                ? "text-[#3d2415]"
+                : "hover:text-[#3d2415]"}
+            >
               ALL
             </button>
 
             <button
-              onClick={handleSearch}
-              className={
-                categoryFromUrl === "girls"
-                  ? "text-[#3d2415]"
-                  : "hover:text-[#3d2415]"} >
+              onClick={() => handleCategoryChange("girls")}
+              className={categoryFromUrl === "girls"
+                ? "text-[#3d2415]"
+                : "hover:text-[#3d2415]"}
+            >
               GIRLS
             </button>
 
             <button
-              onClick={handleSearch}
-              className={
-                categoryFromUrl === "boys"
-                  ? "text-[#3d2415]"
-                  : "hover:text-[#3d2415]"}>
+              onClick={() => handleCategoryChange("boys")}
+              className={categoryFromUrl === "boys"
+                ? "text-[#3d2415]"
+                : "hover:text-[#3d2415]"}
+            >
               BOYS
             </button>
 
             <button
-              onClick={handleSearch}
-              className={
-                categoryFromUrl === "kids"
-                  ? "text-[#3d2415]"
-                  : "hover:text-[#3d2415]"}>
+              onClick={() => handleCategoryChange("kids")}
+              className={categoryFromUrl === "kids"
+                ? "text-[#3d2415]"
+                : "hover:text-[#3d2415]"}
+            >
               KIDS
             </button>
 
           </div>
+
 
           <p className="hidden text-xs text-[#8a7565] sm:block">
             {totalCount} PRODUCTS

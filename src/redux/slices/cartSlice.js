@@ -1,5 +1,4 @@
 
-
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 import {
@@ -21,6 +20,7 @@ export const addToCart = createAsyncThunk(
     async (product) => {
         await addCartItem(
             product.id,
+            product.size,
             product.quantity || 1
         );
 
@@ -30,8 +30,8 @@ export const addToCart = createAsyncThunk(
 
 export const updateCartQuantity = createAsyncThunk(
     "cart/updateQuantity",
-    async ({ id, quantity }) => {
-        await updateCartItem(id, quantity);
+    async ({ id, size, quantity }) => {
+        await updateCartItem(id, size, quantity);
 
         return await getCartService();
     }
@@ -39,10 +39,10 @@ export const updateCartQuantity = createAsyncThunk(
 
 export const removeFromCart = createAsyncThunk(
     "cart/removeFromCart",
-    async (productId) => {
-        await removeCartItem(productId);
+    async ({ id, size }) => {
+        await removeCartItem(id, size);
 
-        return productId;
+        return { id, size };
     }
 );
 
@@ -64,7 +64,6 @@ const cartSlice = createSlice({
     extraReducers: (builder) => {
         builder
 
-            // Fetch cart
             .addCase(fetchCart.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -80,20 +79,19 @@ const cartSlice = createSlice({
                 state.error = action.error.message;
             })
 
-            // Add product
             .addCase(addToCart.fulfilled, (state, action) => {
                 state.items = action.payload;
             })
 
-            // Update quantity
             .addCase(updateCartQuantity.fulfilled, (state, action) => {
                 state.items = action.payload;
             })
 
-            // Remove product
             .addCase(removeFromCart.fulfilled, (state, action) => {
                 state.items = state.items.filter(
-                    item => item.id !== action.payload
+                    item =>
+                        !(item.id === action.payload.id &&
+                          item.size === action.payload.size)
                 );
             });
     }

@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {fetchCart,removeFromCart,updateCartQuantity} from "../redux/slices/cartSlice";
+import { fetchCart, removeFromCart, updateCartQuantity } from "../redux/slices/cartSlice";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -13,7 +13,7 @@ function Cart() {
 
   useEffect(() => {
     dispatch(fetchCart());
-}, [dispatch]);
+  }, [dispatch]);
 
   const subtotal = cartItems.reduce(
     (total, item) =>
@@ -25,87 +25,92 @@ function Cart() {
   const total = subtotal + shipping;
 
 
-  
-const handleRemove = async (item) => {
+
+  const handleRemove = async (item) => {
     const productName = item.name || "this product";
 
     const confirmed = window.confirm(
-        `Are you sure you want to remove ${productName} from your cart?`
+      `Are you sure you want to remove ${productName} from your cart?`
     );
 
     if (!confirmed) return;
 
     try {
-        await dispatch(
-            removeFromCart(item.id)
-        ).unwrap();
+      await dispatch(
+        removeFromCart({
+          id: item.id,
+          size: item.size
+        })
+      ).unwrap();
 
-        toast.success("Product removed from cart");
+      toast.success("Product removed from cart");
 
     } catch (error) {
-        toast.error(
-            typeof error === "string"
-                ? error
-                : "Failed to remove product"
-        );
+      toast.error(
+        typeof error === "string"
+          ? error
+          : "Failed to remove product"
+      );
     }
-};
+  };
 
 
-  
-const handleIncrease = async (item) => {
+
+  const handleIncrease = async (item) => {
     if (item.quantity >= item.stock) {
-        toast.error(
-            `Only ${item.stock} items available in stock`
-        );
-        return;
+      toast.error(
+        `Only ${item.stock} items available in stock`
+      );
+      return;
     }
 
     try {
-        await dispatch(
-            updateCartQuantity({
-                id: item.id,
-                quantity: item.quantity + 1
-            })
-        ).unwrap();
+      await dispatch(
+        updateCartQuantity({
+          id: item.id,
+          size: item.size,
+          quantity: item.quantity + 1
+        })
+      ).unwrap();
 
-        toast.success("Quantity increased");
+      toast.success("Quantity increased");
 
     } catch (error) {
-        toast.error(
-            typeof error === "string"
-                ? error
-                : "Failed to update quantity"
-        );
+      toast.error(
+        typeof error === "string"
+          ? error
+          : "Failed to update quantity"
+      );
     }
-};
+  };
 
 
-  
-const handleDecrease = async (item) => {
+
+  const handleDecrease = async (item) => {
     if (item.quantity <= 1) {
-        toast.error("Minimum quantity is 1");
-        return;
+      toast.error("Minimum quantity is 1");
+      return;
     }
 
     try {
-        await dispatch(
-            updateCartQuantity({
-                id: item.id,
-                quantity: item.quantity - 1
-            })
-        ).unwrap();
+      await dispatch(
+        updateCartQuantity({
+          id: item.id,
+          size: item.size,
+          quantity: item.quantity - 1
+        })
+      ).unwrap();
 
-        toast.success("Quantity decreased");
+      toast.success("Quantity decreased");
 
     } catch (error) {
-        toast.error(
-            typeof error === "string"
-                ? error
-                : "Failed to update quantity"
-        );
+      toast.error(
+        typeof error === "string"
+          ? error
+          : "Failed to update quantity"
+      );
     }
-};
+  };
 
 
   return (
@@ -152,7 +157,7 @@ const handleDecrease = async (item) => {
 
               return (
                 <div
-                  key={item.id}
+                  key={`${item.id}-${item.size}`}
                   className="flex gap-5 border-b border-[#e5ded4] py-6"
                 >
                   <div className="h-32 w-24 shrink-0 overflow-hidden bg-[#eee6dc] sm:h-40 sm:w-32">
@@ -172,6 +177,9 @@ const handleDecrease = async (item) => {
 
                         <p className="mt-1 text-sm text-[#765e4e]">
                           ₹{item.price}
+                        </p>
+                        <p className="mt-1 text-xs text-[#8a7565]">
+                          Size: {item.size}
                         </p>
                       </div>
 
@@ -220,7 +228,6 @@ const handleDecrease = async (item) => {
             })}
           </div>
 
-          {/* Order Summary */}
           <div className="mt-10 bg-[#E8DDD0] p-7 sm:p-8">
             <h2 className="font-serif text-2xl text-[#3d2415]">
               Order Summary

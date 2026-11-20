@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 
 import { placeOrder } from "../redux/slices/orderSlice";
 import { clearCart } from "../redux/slices/cartSlice";
-import {getAddresses,addAddress,} from "../services/addressService";
+import { getAddresses, addAddress, } from "../services/addressService";
 
 function Checkout() {
   const dispatch = useDispatch();
@@ -18,7 +18,7 @@ function Checkout() {
   const cartItems = useSelector((state) => state.cart.items);
   const { loading } = useSelector((state) => state.orders);
 
-  
+
   const buyNowItem = location.state?.buyNowItem || null;
   const isBuyNowCheckout = Boolean(buyNowItem);
 
@@ -97,7 +97,7 @@ function Checkout() {
     0
   );
 
-  const shipping = subtotal >= 1000 ? 0 : 50;
+  const shipping = subtotal >= 999 ? 0 : 50;
   const total = subtotal + shipping;
 
   const validateForm = () => {
@@ -196,78 +196,85 @@ function Checkout() {
   };
 
 
-  
-const handleSubmit = async (e) => {
-  e.preventDefault();
 
-  if (checkoutItems.length === 0) {
-    toast.error("Your cart is empty.");
-    return;
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (!validateForm()) {
-    toast.error("Please correct the highlighted fields.");
-    return;
-  }
+    if (checkoutItems.length === 0) {
+      toast.error("Your cart is empty.");
+      return;
+    }
 
-  try {
-    let addressId = selectedAddressId;
+    if (!validateForm()) {
+      toast.error("Please correct the highlighted fields.");
+      return;
+    }
 
-    if (!addressId) {
-      const addressData = {
-        fullName: formData.name.trim(),
-        phone: formData.phone.trim(),
-        addressLine: formData.address.trim(),
-        city: formData.city.trim(),
-        state: formData.state.trim(),
-        postalCode: formData.pincode.trim(),
-        country: "India",
-      };
-
-      const savedAddress = await addAddress(addressData);
-
-      addressId = savedAddress.addressId;
+    try {
+      let addressId = selectedAddressId;
 
       if (!addressId) {
-        throw new Error("Address was saved but its ID was not returned.");
+        const addressData = {
+          fullName: formData.name.trim(),
+          phone: formData.phone.trim(),
+          addressLine: formData.address.trim(),
+          city: formData.city.trim(),
+          state: formData.state.trim(),
+          postalCode: formData.pincode.trim(),
+          country: "India",
+        };
+
+        const savedAddress = await addAddress(addressData);
+
+        addressId = savedAddress.addressId;
+
+        if (!addressId) {
+          throw new Error("Address was saved but its ID was not returned.");
+        }
       }
+
+      const checkoutData = {
+        addressId: Number(addressId),
+        paymentMethod:
+          paymentMethod === "cod"
+            ? "CashOnDelivery"
+            : "OnlinePayment",
+
+        ...(isBuyNowCheckout && {
+          productId: Number(
+            buyNowItem.productId ?? buyNowItem.id
+          ),
+          size: buyNowItem.size,
+          quantity: Number(buyNowItem.quantity || 1),
+        }),
+      };
+
+      await dispatch(placeOrder(checkoutData)).unwrap();
+
+      if (!isBuyNowCheckout) {
+        dispatch(clearCart());
+      }
+
+      toast.success("Your order has been placed successfully!");
+
+      navigate("/orders");
+
+    } catch (error) {
+      console.error("Checkout failed:", error);
+
+      const message =
+        error?.response?.data?.message ||
+        error?.response?.data?.title ||
+        error?.message ||
+        "Failed to place your order.";
+
+      toast.error(message);
     }
-
-    const checkoutData = {
-      addressId: Number(addressId),
-      paymentMethod:
-        paymentMethod === "cod"
-          ? "CashOnDelivery"
-          : "OnlinePayment",
-    };
-
-    await dispatch(placeOrder(checkoutData)).unwrap();
-
-    if (!isBuyNowCheckout) {
-      dispatch(clearCart());
-    }
-
-    toast.success("Your order has been placed successfully!");
-
-    navigate("/orders");
-
-  } catch (error) {
-    console.error("Checkout failed:", error);
-
-    const message =
-      error?.response?.data?.message ||
-      error?.response?.data?.title ||
-      error?.message ||
-      "Failed to place your order.";
-
-    toast.error(message);
-  }
-};
+  };
 
 
   const inputClass = (field) =>
-    `w-full border ${
-      errors[field] ? "border-red-500" : "border-[#d8cabc]"
+    `w-full border ${errors[field] ? "border-red-500" : "border-[#d8cabc]"
     } bg-transparent px-4 py-3 text-sm text-[#3d2415] outline-none placeholder:text-[#a18d7d] focus:border-[#6b3f22]`;
 
   const ErrorMessage = ({ field }) =>
@@ -277,7 +284,6 @@ const handleSubmit = async (e) => {
       </p>
     ) : null;
 
-  // Empty checkout
   if (checkoutItems.length === 0) {
     return (
       <main className="min-h-screen bg-[#f8f3ec]">
@@ -304,7 +310,7 @@ const handleSubmit = async (e) => {
   return (
     <main className="min-h-screen bg-[#f8f3ec]">
 
-      {/* Heading */}
+
       <section className="flex min-h-[260px] flex-col items-center justify-center px-6 text-center">
         <h1 className="font-serif text-4xl text-[#3d2415] sm:text-5xl">
           Checkout
@@ -325,7 +331,7 @@ const handleSubmit = async (e) => {
         <form onSubmit={handleSubmit} noValidate>
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_380px]">
 
-            {/* Delivery Details */}
+
             <div>
               <h2 className="font-serif text-2xl text-[#3d2415]">
                 Delivery Details
@@ -335,7 +341,7 @@ const handleSubmit = async (e) => {
                 Please enter your delivery information.
               </p>
 
-              {/* Saved Addresses */}
+
               {savedAddresses.length > 0 && (
                 <div className="mt-8">
                   <h3 className="mb-4 text-sm font-semibold text-[#3d2415]">
@@ -346,11 +352,10 @@ const handleSubmit = async (e) => {
                     {savedAddresses.map((address) => (
                       <label
                         key={address.addressId}
-                        className={`block cursor-pointer border p-4 ${
-                          selectedAddressId === address.addressId
-                            ? "border-[#6b3f22] bg-[#fffdf9]"
-                            : "border-[#d8cabc]"
-                        }`}
+                        className={`block cursor-pointer border p-4 ${selectedAddressId === address.addressId
+                          ? "border-[#6b3f22] bg-[#fffdf9]"
+                          : "border-[#d8cabc]"
+                          }`}
                       >
                         <div className="flex items-start gap-3">
                           <input
@@ -392,10 +397,10 @@ const handleSubmit = async (e) => {
                 </div>
               )}
 
-              {/* Delivery Form */}
+
               <div className="mt-8 space-y-6">
 
-                {/* Name */}
+                
                 <div>
                   <label className="mb-2 block text-xs tracking-wider text-[#765e4e]">
                     FULL NAME
@@ -414,7 +419,7 @@ const handleSubmit = async (e) => {
                   <ErrorMessage field="name" />
                 </div>
 
-                {/* Email and Phone */}
+
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                   <div>
                     <label className="mb-2 block text-xs tracking-wider text-[#765e4e]">
@@ -455,7 +460,6 @@ const handleSubmit = async (e) => {
                   </div>
                 </div>
 
-                {/* Address */}
                 <div>
                   <label className="mb-2 block text-xs tracking-wider text-[#765e4e]">
                     ADDRESS
@@ -474,7 +478,7 @@ const handleSubmit = async (e) => {
                   <ErrorMessage field="address" />
                 </div>
 
-                {/* City, State, PIN */}
+
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
                   <div>
                     <label className="mb-2 block text-xs tracking-wider text-[#765e4e]">
@@ -533,7 +537,7 @@ const handleSubmit = async (e) => {
                   </div>
                 </div>
 
-                {/* Payment */}
+
                 <div>
                   <h2 className="font-serif text-2xl text-[#3d2415]">
                     Payment Method
@@ -590,7 +594,7 @@ const handleSubmit = async (e) => {
               </div>
             </div>
 
-            {/* Order Summary */}
+
             <aside className="h-fit bg-[#E8DDD0] p-7 sm:p-8 lg:sticky lg:top-8">
               <h2 className="font-serif text-2xl text-[#3d2415]">
                 Order Summary
@@ -625,6 +629,10 @@ const handleSubmit = async (e) => {
                         <div>
                           <p className="text-sm text-[#3d2415]">
                             {item.title || item.name}
+                          </p>
+
+                          <p className="mt-1 text-xs text-[#8a7565]">
+                            Size: {item.size}
                           </p>
 
                           <p className="mt-1 text-xs text-[#8a7565]">

@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {useNavigate,useParams,Link,} from "react-router-dom";
+import { useNavigate, useParams, Link, } from "react-router-dom";
 import toast from "react-hot-toast";
 import { fetchProductById } from "../redux/slices/productSlice";
 import { addToCart } from "../redux/slices/cartSlice";
-import {addToWishlist,removeFromWishlist,} from "../redux/slices/wishlistSlice";
+import { addToWishlist, removeFromWishlist, } from "../redux/slices/wishlistSlice";
 
 function ProductDetails() {
   const { id } = useParams();
@@ -30,6 +30,7 @@ function ProductDetails() {
 
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [selectedSize, setSelectedSize] = useState("");
 
 
   useEffect(() => {
@@ -108,44 +109,55 @@ function ProductDetails() {
     }
   };
 
-  
-const handleAddToCart = async () => {
+
+  const handleAddToCart = async () => {
+
+    if (!selectedSize) {
+      toast.error("Please select a size");
+      return;
+    }
     if (stock <= 0) {
-        toast.error("This product is out of stock");
-        return;
+      toast.error("This product is out of stock");
+      return;
     }
 
     if (quantity > remainingStock) {
-        toast.error(
-            `Only ${remainingStock} more item(s) can be added`
-        );
-        return;
+      toast.error(
+        `Only ${remainingStock} more item(s) can be added`
+      );
+      return;
     }
 
     try {
-        await dispatch(
-            addToCart({
-                ...product,
-                quantity,
-                stock
-            })
-        ).unwrap();
+      await dispatch(
+        addToCart({
+          ...product,
+          size: selectedSize,
+          quantity,
+          stock
+        })
+      ).unwrap();
 
-        toast.success(`${productName} added to cart`);
+      toast.success(`${productName} added to cart`);
 
-        setQuantity(1);
+      setQuantity(1);
 
     } catch (error) {
-        toast.error(
-            typeof error === "string"
-                ? error
-                : "Failed to add product to cart"
-        );
+      toast.error(
+        typeof error === "string"
+          ? error
+          : "Failed to add product to cart"
+      );
     }
-};
+  };
 
 
   const handleBuyNow = () => {
+
+    if (!selectedSize) {
+      toast.error("Please select a size");
+      return;
+    }
     if (stock <= 0) {
       toast.error("This product is out of stock");
       return;
@@ -160,6 +172,7 @@ const handleAddToCart = async () => {
       state: {
         buyNowItem: {
           ...product,
+          size: selectedSize,
           quantity,
           stock,
         },
@@ -167,30 +180,30 @@ const handleAddToCart = async () => {
     });
   };
 
-  
-const handleWishlist = async () => {
+
+  const handleWishlist = async () => {
     try {
-        if (isWishlisted) {
-            await dispatch(
-                removeFromWishlist(product.id)
-            ).unwrap();
+      if (isWishlisted) {
+        await dispatch(
+          removeFromWishlist(product.id)
+        ).unwrap();
 
-            toast.success("Removed from wishlist");
-        } else {
-            await dispatch(
-                addToWishlist(product)
-            ).unwrap();
+        toast.success("Removed from wishlist");
+      } else {
+        await dispatch(
+          addToWishlist(product)
+        ).unwrap();
 
-            toast.success("Added to wishlist");
-        }
+        toast.success("Added to wishlist");
+      }
     } catch (error) {
-        toast.error(
-            typeof error === "string"
-                ? error
-                : "Wishlist operation failed"
-        );
+      toast.error(
+        typeof error === "string"
+          ? error
+          : "Wishlist operation failed"
+      );
     }
-};
+  };
 
   return (
     <main className="min-h-screen bg-[#f8f3ec]">
@@ -245,8 +258,8 @@ const handleWishlist = async () => {
                     type="button"
                     onClick={() => setSelectedImage(index)}
                     className={`h-20 w-16 shrink-0 overflow-hidden border-2 ${selectedImage === index
-                        ? "border-[#6b3f22]"
-                        : "border-transparent"
+                      ? "border-[#6b3f22]"
+                      : "border-transparent"
                       }`}
                   >
                     <img
@@ -302,28 +315,31 @@ const handleWishlist = async () => {
             </p>
 
 
+
             {product.sizes?.length > 0 && (
               <div className="mt-7">
-
                 <p className="mb-3 text-xs tracking-widest text-[#765e4e]">
-                  AVAILABLE SIZES
+                  SELECT SIZE
                 </p>
 
                 <div className="flex flex-wrap gap-3">
-
                   {product.sizes.map((size, index) => (
-                    <span
+                    <button
                       key={index}
-                      className="border border-[#d8cabc] px-5 py-3 text-sm text-[#6b3f22]"
+                      type="button"
+                      onClick={() => setSelectedSize(size)}
+                      className={`border px-5 py-3 text-sm transition ${selectedSize === size
+                        ? "border-[#6b3f22] bg-[#6b3f22] text-white"
+                        : "border-[#d8cabc] text-[#6b3f22] hover:border-[#6b3f22]"
+                        }`}
                     >
                       {size}
-                    </span>
+                    </button>
                   ))}
-
                 </div>
-
               </div>
             )}
+
 
             <p className="mt-5 text-xs tracking-wide text-[#8a7565]">
               {stock > 0

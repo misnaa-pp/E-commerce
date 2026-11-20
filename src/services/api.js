@@ -14,10 +14,10 @@ api.interceptors.request.use((config) => {
         localStorage.getItem("authData") || "null"
     );
 
-    if (authData?.accessToken) {
-        config.headers.Authorization =
-            `Bearer ${authData.accessToken}`;
-    }
+    if (!config.headers.Authorization && authData?.accessToken) {
+    config.headers.Authorization =
+        `Bearer ${authData.accessToken}`;
+}
 
     return config;
 });

@@ -1,11 +1,9 @@
 
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-import { fetchProducts } from "../../redux/slices/productSlice";
-import { fetchUsers } from "../../redux/slices/userSlice";
-import { fetchOrders } from "../../redux/slices/orderSlice";
+import { getAdminDashboard } from "../../services/adminService";
 
 import {
   BarChart,
@@ -51,149 +49,65 @@ const formatDate = (date) => {
 };
 
 function AdminDashboard() {
-  const dispatch = useDispatch();
-
   const { admin } = useSelector((state) => state.admin);
-  const { products, loading: productsLoading } = useSelector(
-    (state) => state.products
-  );
-  const { users, loading: usersLoading } = useSelector(
-    (state) => state.users
-  );
-  const { orders, loading: ordersLoading } = useSelector(
-    (state) => state.orders
-  );
+
+  const [dashboard, setDashboard] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    if (products.length === 0) {
-      dispatch(fetchProducts());
-    }
+    const loadDashboard = async () => {
+      try {
+        setLoading(true);
+        setError("");
 
-    if (users.length === 0) {
-      dispatch(fetchUsers());
-    }
+        const data = await getAdminDashboard();
 
-    if (orders.length === 0) {
-      dispatch(fetchOrders());
-    }
-  }, [
-    dispatch,
-    products.length,
-    users.length,
-    orders.length,
-  ]);
+        setDashboard(data);
+      } catch (err) {
+        console.error("Dashboard error:", err);
 
-  // Exclude cancelled orders from order value
-  const validOrders = orders.filter(
-    (order) =>
-      order.status?.toLowerCase() !== "cancelled"
-  );
+        setError(
+          err.response?.data?.message ||
+          "Failed to load dashboard data."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const totalRevenue = validOrders.reduce(
-    (total, order) =>
-      total + Number(order.total || 0),
-    0
-  );
-
-  const pendingOrders = orders.filter(
-    (order) =>
-      order.status?.toLowerCase() === "pending"
-  ).length;
-
-  // Products with stock of 5 or less
-  const lowStockProducts = products.filter(
-    (product) => Number(product.stock) <= 5
-  );
-
-  const outOfStockProducts = products.filter(
-    (product) => Number(product.stock) <= 0
-  );
-
-  // Products grouped by category
-  const categoryData = products.reduce((acc, product) => {
-    const category = product.category || "Other";
-
-    const existing = acc.find(
-      (item) => item.name === category
-    );
-
-    if (existing) {
-      existing.value += 1;
-    } else {
-      acc.push({
-        name: category,
-        value: 1,
-      });
-    }
-
-    return acc;
+    loadDashboard();
   }, []);
 
-  // Last six months' order value
-  const currentDate = new Date();
+  const totalProducts = dashboard?.totalProducts || 0;
+  const totalCustomers = dashboard?.totalCustomers || 0;
+  const totalOrders = dashboard?.totalOrders || 0;
+  const pendingOrders = dashboard?.pendingOrders || 0;
+  const totalRevenue = dashboard?.totalRevenue || 0;
 
-  const monthlySales = Array.from(
-    { length: 6 },
-    (_, index) => {
-      const monthDate = new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth() - 5 + index,
-        1
-      );
+  const lowStockProducts = dashboard?.lowStockProducts || 0;
+  const outOfStockProducts = dashboard?.outOfStockProducts || 0;
 
-      const monthOrders = validOrders.filter((order) => {
-        const orderDate = new Date(order.createdAt);
-
-        return (
-          !Number.isNaN(orderDate.getTime()) &&
-          orderDate.getMonth() === monthDate.getMonth() &&
-          orderDate.getFullYear() === monthDate.getFullYear()
-        );
-      });
-
-      const revenue = monthOrders.reduce(
-        (total, order) =>
-          total + Number(order.total || 0),
-        0
-      );
-
-      return {
-        month: monthDate.toLocaleDateString("en-IN", {
-          month: "short",
-        }),
-        revenue,
-      };
-    }
-  );
-
-  // Latest orders
-  const recentOrders = [...orders]
-    .sort(
-      (a, b) =>
-        new Date(b.createdAt || 0) -
-        new Date(a.createdAt || 0)
-    )
-    .slice(0, 5);
-
-  const isLoading =
-    productsLoading || usersLoading || ordersLoading;
+  const categoryData = dashboard?.categoryData || [];
+  const monthlySales = dashboard?.monthlySales || [];
+  const recentOrders = dashboard?.recentOrders || [];
 
   const statCards = [
     {
       title: "Total Products",
-      value: products.length,
+      value: totalProducts,
       description: "Products in your store",
       icon: "▣",
     },
     {
       title: "Total Customers",
-      value: users.length,
+      value: totalCustomers,
       description: "Registered customers",
       icon: "♙",
     },
     {
       title: "Total Orders",
-      value: orders.length,
+      value: totalOrders,
       description: `${pendingOrders} pending orders`,
       icon: "▤",
     },
@@ -204,6 +118,31 @@ function AdminDashboard() {
       icon: "₹",
     },
   ];
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[300px] items-center justify-center">
+        <p className="text-sm tracking-widest text-[#98704F]">
+          LOADING DASHBOARD...
+        </p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="rounded-2xl border border-red-200 bg-white p-8 text-center">
+        <p className="text-sm text-red-600">{error}</p>
+
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-4 rounded-lg bg-[#6B3F22] px-5 py-2 text-sm text-white"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -236,13 +175,6 @@ function AdminDashboard() {
         </p>
 
       </div>
-
-      {/* Loading */}
-      {isLoading && (
-        <p className="text-sm text-[#98704F]">
-          Updating dashboard information...
-        </p>
-      )}
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
@@ -374,9 +306,7 @@ function AdminDashboard() {
                     {categoryData.map((entry, index) => (
                       <Cell
                         key={entry.name}
-                        fill={
-                          chartColors[index % chartColors.length]
-                        }
+                        fill={chartColors[index % chartColors.length]}
                       />
                     ))}
                   </Pie>
@@ -398,8 +328,10 @@ function AdminDashboard() {
 
       </div>
 
+      {/* Recent Orders and Low Stock */}
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
 
+        {/* Recent Orders */}
         <div className="overflow-hidden rounded-2xl border border-[#E9DCCF] bg-white shadow-sm xl:col-span-2">
 
           <div className="flex items-center justify-between border-b border-[#F0E8DF] p-6">
@@ -450,7 +382,7 @@ function AdminDashboard() {
                       </td>
 
                       <td className="px-6 py-4 text-gray-700">
-                        {order.customer?.name || "Customer"}
+                        {order.customerName || "Customer"}
                       </td>
 
                       <td className="px-6 py-4 text-gray-500">
@@ -510,57 +442,39 @@ function AdminDashboard() {
             </div>
 
             <span className="rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-600">
-              {lowStockProducts.length}
+              {lowStockProducts}
             </span>
 
           </div>
 
-          <div className="space-y-4 p-6">
+          <div className="space-y-5 p-6">
 
-            {lowStockProducts.length > 0 ? (
-              lowStockProducts.slice(0, 5).map((product) => (
-                <div
-                  key={product.id}
-                  className="flex items-center justify-between gap-3"
-                >
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-medium text-[#4A3020]">
-                      {product.name}
-                    </p>
-
-                    <p className="mt-1 text-xs text-gray-400">
-                      {product.category || "Other"}
-                    </p>
-                  </div>
-
-                  <span
-                    className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${
-                      Number(product.stock) <= 0
-                        ? "bg-red-100 text-red-700"
-                        : "bg-orange-100 text-orange-700"
-                    }`}
-                  >
-                    {Number(product.stock) <= 0
-                      ? "Out of stock"
-                      : `${product.stock} left`}
-                  </span>
-
-                </div>
-              ))
-            ) : (
-              <p className="py-8 text-center text-sm text-gray-400">
-                All products have sufficient stock.
+            <div>
+              <p className="text-sm text-gray-500">
+                Low stock products
               </p>
-            )}
 
-            {lowStockProducts.length > 0 && (
-              <Link
-                to="/admin/products"
-                className="block border-t border-[#F0E8DF] pt-4 text-center text-sm font-medium text-[#8A5A36] hover:underline"
-              >
-                Manage Products
-              </Link>
-            )}
+              <p className="mt-1 text-2xl font-bold text-orange-600">
+                {lowStockProducts}
+              </p>
+            </div>
+
+            <div className="border-t border-[#F0E8DF] pt-5">
+              <p className="text-sm text-gray-500">
+                Out of stock products
+              </p>
+
+              <p className="mt-1 text-2xl font-bold text-red-600">
+                {outOfStockProducts}
+              </p>
+            </div>
+
+            <Link
+              to="/admin/products"
+              className="block border-t border-[#F0E8DF] pt-4 text-center text-sm font-medium text-[#8A5A36] hover:underline"
+            >
+              Manage Products
+            </Link>
 
           </div>
         </div>

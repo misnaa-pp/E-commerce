@@ -17,13 +17,13 @@ function OrderDetails() {
     dispatch(fetchOrderById(id));
   }, [dispatch, id]);
 
-  // Match the backend OrderId property
+  
   const order =
     selectedOrder?.orderId?.toString() === id
       ? selectedOrder
       : null;
 
-  // Tracking steps
+  
   const trackingSteps = [
     "Pending",
     "Processing",
@@ -46,7 +46,7 @@ function OrderDetails() {
 
   const currentStep = statusAliases[status] ?? 0;
 
-  // Convert backend image URL
+  
   const getProductImage = (imageUrl) => {
     if (!imageUrl) return "";
 
@@ -59,7 +59,7 @@ function OrderDetails() {
     return `${apiUrl}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
   };
 
-  // Loading
+  
   if (loading && !order) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#f8f3ec]">
@@ -70,7 +70,7 @@ function OrderDetails() {
     );
   }
 
-  // Order not found
+  
   if (error || !order) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-[#f8f3ec] px-6 text-center">
@@ -96,7 +96,7 @@ function OrderDetails() {
     <main className="min-h-screen bg-[#f8f3ec] px-5 py-12 sm:px-10">
       <div className="mx-auto max-w-4xl">
 
-        {/* Back Button */}
+        
         <Link
           to="/orders"
           className="text-xs tracking-widest text-[#765e4e] hover:text-[#3d2415]"
@@ -104,7 +104,7 @@ function OrderDetails() {
           ← BACK TO MY ORDERS
         </Link>
 
-        {/* Page Heading */}
+        
         <div className="mb-10 mt-8">
           <h1 className="font-serif text-3xl text-[#3d2415] sm:text-4xl">
             Order Details
@@ -118,15 +118,15 @@ function OrderDetails() {
             Placed on{" "}
             {order.orderDate
               ? new Date(order.orderDate).toLocaleDateString("en-IN", {
-                  day: "2-digit",
-                  month: "long",
-                  year: "numeric",
-                })
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+              })
               : "Date unavailable"}
           </p>
         </div>
 
-        {/* Order Tracking */}
+        
         <section className="mb-8 border border-[#e5ded4] bg-[#fffdf9] p-6 sm:p-8">
           <h2 className="font-serif text-2xl text-[#3d2415]">
             Track Your Order
@@ -149,7 +149,7 @@ function OrderDetails() {
           ) : (
             <div className="mt-10">
 
-              {/* Desktop Tracking Timeline */}
+              
               <div className="hidden sm:block">
                 <div className="relative flex justify-between">
 
@@ -171,21 +171,19 @@ function OrderDetails() {
                         className="relative z-10 flex w-1/4 flex-col items-center text-center"
                       >
                         <div
-                          className={`flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs ${
-                            completed
+                          className={`flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs ${completed
                               ? "border-[#79563d] bg-[#79563d] text-white"
                               : "border-[#d8cabc] bg-[#fffdf9] text-[#8a7565]"
-                          }`}
+                            }`}
                         >
                           {completed ? "✓" : index + 1}
                         </div>
 
                         <p
-                          className={`mt-3 text-xs ${
-                            completed
+                          className={`mt-3 text-xs ${completed
                               ? "font-medium text-[#3d2415]"
                               : "text-[#a89585]"
-                          }`}
+                            }`}
                         >
                           {step}
                         </p>
@@ -195,7 +193,7 @@ function OrderDetails() {
                 </div>
               </div>
 
-              {/* Mobile Tracking Timeline */}
+              
               <div className="space-y-5 sm:hidden">
                 {trackingSteps.map((step, index) => {
                   const completed = index <= currentStep;
@@ -206,21 +204,19 @@ function OrderDetails() {
                       className="flex items-center gap-4"
                     >
                       <div
-                        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 text-xs ${
-                          completed
+                        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 text-xs ${completed
                             ? "border-[#79563d] bg-[#79563d] text-white"
                             : "border-[#d8cabc] text-[#8a7565]"
-                        }`}
+                          }`}
                       >
                         {completed ? "✓" : index + 1}
                       </div>
 
                       <p
-                        className={`text-sm ${
-                          completed
+                        className={`text-sm ${completed
                             ? "font-medium text-[#3d2415]"
                             : "text-[#a89585]"
-                        }`}
+                          }`}
                       >
                         {step}
                       </p>
@@ -242,7 +238,7 @@ function OrderDetails() {
           )}
         </section>
 
-        {/* Ordered Products */}
+        
         <section className="mb-8 border border-[#e5ded4] bg-[#fffdf9] p-6 sm:p-8">
           <h2 className="mb-5 font-serif text-2xl text-[#3d2415]">
             Ordered Items
@@ -277,6 +273,10 @@ function OrderDetails() {
                   </h3>
 
                   <p className="mt-1 text-xs text-[#8a7565]">
+                    Size: {item.size}
+                  </p>
+
+                  <p className="mt-1 text-xs text-[#8a7565]">
                     Quantity: {item.quantity}
                   </p>
 
@@ -295,7 +295,7 @@ function OrderDetails() {
           </div>
         </section>
 
-        {/* Payment and Price Summary */}
+
         <section className="border border-[#e5ded4] bg-[#fffdf9] p-6 sm:p-8">
           <h2 className="mb-5 font-serif text-2xl text-[#3d2415]">
             Payment Summary
