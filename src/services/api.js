@@ -43,6 +43,26 @@ api.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
+        
+        if (error.response?.status === 403) {
+            const message =
+                error.response?.data?.message ||
+                error.response?.data;
+
+            if (
+                typeof message === "string" &&
+                message.toLowerCase().includes("blocked")
+            ) {
+                localStorage.removeItem("authData");
+
+                window.dispatchEvent(
+                    new Event("authSessionExpired")
+                );
+            }
+
+            return Promise.reject(error);
+        }
+
         if (
             error.response?.status !== 401 ||
             !originalRequest ||

@@ -8,6 +8,16 @@ import { fetchProductById } from "../redux/slices/productSlice";
 import { addToCart } from "../redux/slices/cartSlice";
 import { addToWishlist, removeFromWishlist, } from "../redux/slices/wishlistSlice";
 
+const getImageUrl = (image) => {
+  if (!image) return "";
+
+  if (image.startsWith("http")) {
+    return image;
+  }
+
+  return `https://localhost:7183${image.startsWith("/") ? "" : "/"}${image}`;
+};
+
 function ProductDetails() {
   const { id } = useParams();
 
@@ -228,7 +238,7 @@ function ProductDetails() {
 
               <div className="aspect-[4/5] overflow-hidden">
                 <img
-                  src={productImage}
+                  src={getImageUrl(productImage)}
                   alt={productName}
                   className="h-full w-full object-cover"
                 />
@@ -263,7 +273,7 @@ function ProductDetails() {
                       }`}
                   >
                     <img
-                      src={image}
+                      src={getImageUrl(image)}
                       alt={`${productName} ${index + 1}`}
                       className="h-full w-full object-cover"
                     />

@@ -6,6 +6,16 @@ import { fetchCart, removeFromCart, updateCartQuantity } from "../redux/slices/c
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
+const getImageUrl = (image) => {
+  if (!image) return "";
+
+  if (image.startsWith("http")) {
+    return image;
+  }
+
+  return `https://localhost:7183${image.startsWith("/") ? "" : "/"}${image}`;
+};
+
 
 function Cart() {
   const dispatch = useDispatch();
@@ -162,7 +172,7 @@ function Cart() {
                 >
                   <div className="h-32 w-24 shrink-0 overflow-hidden bg-[#eee6dc] sm:h-40 sm:w-32">
                     <img
-                      src={productImage}
+                      src={getImageUrl(productImage)}
                       alt={productName}
                       className="h-full w-full object-cover"
                     />

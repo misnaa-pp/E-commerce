@@ -9,6 +9,17 @@ import toast from "react-hot-toast";
 import { placeOrder } from "../redux/slices/orderSlice";
 import { clearCart } from "../redux/slices/cartSlice";
 import { getAddresses, addAddress, } from "../services/addressService";
+import { createRazorpayOrder, verifyRazorpayPayment, } from "../services/paymentService";
+
+const getImageUrl = (image) => {
+  if (!image) return "";
+
+  if (image.startsWith("http")) {
+    return image;
+  }
+
+  return `https://localhost:7183${image.startsWith("/") ? "" : "/"}${image}`;
+};
 
 function Checkout() {
   const dispatch = useDispatch();
@@ -27,6 +38,7 @@ function Checkout() {
     : cartItems;
 
   const [paymentMethod, setPaymentMethod] = useState("cod");
+  const [paymentProcessing, setPaymentProcessing] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -197,6 +209,7 @@ function Checkout() {
 
 
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -210,7 +223,11 @@ function Checkout() {
       return;
     }
 
+    if (paymentProcessing || loading) return;
+
     try {
+      setPaymentProcessing(true);
+
       let addressId = selectedAddressId;
 
       if (!addressId) {
@@ -225,7 +242,6 @@ function Checkout() {
         };
 
         const savedAddress = await addAddress(addressData);
-
         addressId = savedAddress.addressId;
 
         if (!addressId) {
@@ -249,15 +265,94 @@ function Checkout() {
         }),
       };
 
-      await dispatch(placeOrder(checkoutData)).unwrap();
+      // Place the order in our backend
+      const createdOrder = await dispatch(
+        placeOrder(checkoutData)
+      ).unwrap();
 
-      if (!isBuyNowCheckout) {
-        dispatch(clearCart());
+      // Cash on Delivery
+      if (paymentMethod === "cod") {
+        if (!isBuyNowCheckout) {
+          dispatch(clearCart());
+        }
+
+        toast.success("Your order has been placed successfully!");
+        navigate("/orders");
+        return;
       }
 
-      toast.success("Your order has been placed successfully!");
+      // Online Payment
+      if (!window.Razorpay) {
+        throw new Error("Razorpay Checkout script is not loaded.");
+      }
 
-      navigate("/orders");
+      // Create Razorpay order through our backend
+      const razorpayOrder = await createRazorpayOrder(
+        createdOrder.orderId
+      );
+
+      const options = {
+        key: razorpayOrder.keyId,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        name: "KidsWear",
+        description: "KidsWear Order Payment",
+        order_id: razorpayOrder.razorpayOrderId,
+
+        prefill: {
+          name: formData.name,
+          email: formData.email,
+          contact: formData.phone,
+        },
+
+        theme: {
+          color: "#6b3f22",
+        },
+
+        handler: async function (response) {
+          try {
+            await verifyRazorpayPayment({
+              orderId: createdOrder.orderId,
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+            });
+
+            if (!isBuyNowCheckout) {
+              dispatch(clearCart());
+            }
+
+            toast.success("Payment successful! Order placed.");
+            navigate("/orders");
+          } catch (error) {
+            console.error("Payment verification failed:", error);
+            toast.error(
+              error?.response?.data?.message ||
+              "Payment verification failed. Please contact support."
+            );
+          } finally {
+            setPaymentProcessing(false);
+          }
+        },
+
+        modal: {
+          ondismiss: () => {
+            setPaymentProcessing(false);
+            toast.error("Payment was not completed.");
+          },
+        },
+      };
+
+      const razorpay = new window.Razorpay(options);
+
+      razorpay.on("payment.failed", function (response) {
+        setPaymentProcessing(false);
+        toast.error(
+          response.error.description || "Payment failed. Please try again."
+        );
+      });
+
+      razorpay.open();
 
     } catch (error) {
       console.error("Checkout failed:", error);
@@ -269,8 +364,10 @@ function Checkout() {
         "Failed to place your order.";
 
       toast.error(message);
+      setPaymentProcessing(false);
     }
   };
+
 
 
   const inputClass = (field) =>
@@ -400,7 +497,7 @@ function Checkout() {
 
               <div className="mt-8 space-y-6">
 
-                
+
                 <div>
                   <label className="mb-2 block text-xs tracking-wider text-[#765e4e]">
                     FULL NAME
@@ -614,7 +711,7 @@ function Checkout() {
                       <div className="relative h-20 w-16 shrink-0 overflow-hidden bg-[#eee6dc]">
                         {image && (
                           <img
-                            src={image}
+                            src={getImageUrl(image)}
                             alt={item.title || item.name}
                             className="h-full w-full object-cover"
                           />
@@ -681,10 +778,14 @@ function Checkout() {
 
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || paymentProcessing}
                 className="mt-7 w-full bg-[#6b3f22] px-6 py-4 text-xs font-medium tracking-widest text-white transition hover:bg-[#4f2d18] disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {loading ? "PLACING ORDER..." : "PLACE ORDER →"}
+                {loading
+                  ? "PLACING ORDER..."
+                  : paymentProcessing
+                    ? "PROCESSING PAYMENT..."
+                    : "PLACE ORDER →"}
               </button>
 
               <p className="mt-4 text-center text-xs leading-5 text-[#8a7565]">

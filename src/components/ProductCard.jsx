@@ -5,6 +5,16 @@ import toast from "react-hot-toast";
 import { addToCart } from "../redux/slices/cartSlice";
 import {addToWishlist,removeFromWishlist,} from "../redux/slices/wishlistSlice";
 
+const getImageUrl = (image) => {
+  if (!image) return "";
+
+  if (image.startsWith("http")) {
+    return image;
+  }
+
+  return `https://localhost:7183${image.startsWith("/") ? "" : "/"}${image}`;
+};
+
 function ProductCard({ product }) {
   const dispatch = useDispatch();
 
@@ -99,7 +109,7 @@ const handleWishlist = async () => {
 
         <Link to={`/products/${product.id}`}>
           <img
-            src={productImage}
+            src={getImageUrl(productImage)}
             alt={productName}
             className="aspect-[3/4] w-full object-cover transition duration-500 group-hover:scale-105"
           />
@@ -137,17 +147,6 @@ const handleWishlist = async () => {
             ? `${stock} available`
             : "Out of stock"}
         </p>
-
-        <button
-          type="button"
-          onClick={handleAddToCart}
-          disabled={stock <= 0}
-          className="mt-4 w-full bg-[#6b3f22] px-3 py-3 text-[10px] font-medium tracking-[0.15em] text-white transition hover:bg-[#4e2d19] disabled:cursor-not-allowed disabled:bg-[#b9aa9d]"
-        >
-          {stock > 0
-            ? "ADD TO CART"
-            : "OUT OF STOCK"}
-        </button>
 
       </div>
     </article>

@@ -21,7 +21,7 @@ function Orders() {
     dispatch(fetchOrders());
   }, [dispatch]);
 
-  // Convert backend image URL into a usable image URL
+  
   const getProductImage = (imageUrl) => {
     if (!imageUrl) return "";
 
@@ -155,7 +155,7 @@ function Orders() {
                   className="border border-[#e5ded4] bg-[#fffdf9] p-6 sm:p-8"
                 >
 
-                  {/* Order Header */}
+                  
                   <div className="flex flex-col gap-3 border-b border-[#e5ded4] pb-5 sm:flex-row sm:items-center sm:justify-between">
 
                     <div>
@@ -183,7 +183,7 @@ function Orders() {
 
                   </div>
 
-                  {/* Ordered Products */}
+                  
                   <div className="divide-y divide-[#e5ded4]">
 
                     {order.items?.map((item, index) => (

@@ -99,7 +99,7 @@ function Navbar() {
           ) : (
             <Link
               to="/login"
-              className="rounded-full bg-[#6b3f22] px-6 py-3 font-serif text-white text-[15px] text-[#f8f3ec] transition hover:bg-[#4e2d19]"
+              className="rounded-full bg-[#6b3f22] px-6 py-3 font-serif !text-white text-[15px] transition hover:bg-[#4e2d19]"
             >
               Login
             </Link>
