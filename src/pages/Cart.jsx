@@ -5,17 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchCart, removeFromCart, updateCartQuantity } from "../redux/slices/cartSlice";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
-
-const getImageUrl = (image) => {
-  if (!image) return "";
-
-  if (image.startsWith("http")) {
-    return image;
-  }
-
-  return `https://localhost:7183${image.startsWith("/") ? "" : "/"}${image}`;
-};
-
+import getImageUrl from "../utils/imageUrl";
 
 function Cart() {
   const dispatch = useDispatch();

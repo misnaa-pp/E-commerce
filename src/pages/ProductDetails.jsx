@@ -7,16 +7,7 @@ import toast from "react-hot-toast";
 import { fetchProductById } from "../redux/slices/productSlice";
 import { addToCart } from "../redux/slices/cartSlice";
 import { addToWishlist, removeFromWishlist, } from "../redux/slices/wishlistSlice";
-
-const getImageUrl = (image) => {
-  if (!image) return "";
-
-  if (image.startsWith("http")) {
-    return image;
-  }
-
-  return `https://localhost:7183${image.startsWith("/") ? "" : "/"}${image}`;
-};
+import getImageUrl from "../utils/imageUrl";
 
 function ProductDetails() {
   const { id } = useParams();

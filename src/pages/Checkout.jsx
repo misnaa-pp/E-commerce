@@ -5,21 +5,12 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import toast from "react-hot-toast";
-
 import { placeOrder } from "../redux/slices/orderSlice";
 import { clearCart } from "../redux/slices/cartSlice";
 import { getAddresses, addAddress, } from "../services/addressService";
 import { createRazorpayOrder, verifyRazorpayPayment, } from "../services/paymentService";
+import getImageUrl from "../utils/imageUrl";
 
-const getImageUrl = (image) => {
-  if (!image) return "";
-
-  if (image.startsWith("http")) {
-    return image;
-  }
-
-  return `https://localhost:7183${image.startsWith("/") ? "" : "/"}${image}`;
-};
 
 function Checkout() {
   const dispatch = useDispatch();

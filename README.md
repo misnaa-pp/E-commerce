@@ -1,16 +1,83 @@
-# React + Vite
+# KidsWear – Kids Clothing E-Commerce Website
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A full-stack e-commerce application for browsing and purchasing kids' clothing, with separate user and admin functionalities.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+**Frontend**
+- React
+- JavaScript
+- Redux Toolkit
+- React Router
+- Axios
+- Tailwind CSS
+- React Hot Toast
 
-## React Compiler
+**Backend**
+- ASP.NET Core Web API
+- Entity Framework Core
+- SQL Server
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Features
 
-## Expanding the Oxlint configuration
+### User
+- User registration and login
+- JWT-based authentication
+- Browse and search products
+- Filter products by category
+- View product details, sizes, colors, and images
+- Add and remove wishlist items
+- Add and manage cart items
+- Manage delivery addresses
+- Place and view orders
+- Cash on Delivery
+- Online payments using Razorpay (Test Mode)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+### Admin
+- Admin authentication and role-based access
+- Admin Dashboard
+- Manage products
+- Manage orders
+- Manage users
+
+## Getting Started
+
+### 1. Clone the repository
+
+```bash
+git clone <frontend-repository-url>
+```
+
+### 2. Navigate to the project folder
+
+```bash
+cd kids-wear-store
+```
+
+### 3. Install dependencies
+
+```bash
+npm install
+```
+
+### 4. Run the development server
+
+```bash
+npm run dev
+```
+
+The frontend will be available at:
+
+`http://localhost:5173`
+
+## Backend
+
+The backend is maintained in a separate repository:
+
+[KidsWear Backend](https://github.com/misnaa-pp/Ecommerce-Backend)
+
+Make sure the ASP.NET Core backend and SQL Server database are configured and running before using the application.
+
+## Project Purpose
+
+This project was developed to gain practical experience in full-stack web development, REST API integration, authentication, database management, and payment gateway integration.
