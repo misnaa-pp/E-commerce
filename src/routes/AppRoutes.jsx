@@ -21,6 +21,8 @@ import Checkout from "../pages/Checkout";
 import Orders from "../pages/Orders";
 import OrderDetails from "../pages/OrderDetails";
 import Profile from "../pages/Profile";
+import NotFound from "../pages/NotFound";
+import WishlistSizeSelection from "../pages/WishlistSizeSelection";
 
 
 function AppRoutes() {
@@ -31,10 +33,12 @@ function AppRoutes() {
         <Route path="/" element={<Home />} />
         <Route path="/products" element={<Products />} />
         <Route path="/products/:id" element={<ProductDetails />} />
-        <Route path="/wishlist" element={<Wishlist />} />
-        
+
+
 
         <Route element={<ProtectedRoute />}>
+          <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/wishlist/choose-size/:id"element={<WishlistSizeSelection />}/>
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/orders" element={<Orders />} />
@@ -57,6 +61,9 @@ function AppRoutes() {
           <Route path="orders" element={<AdminOrders />} />
         </Route>
       </Route>
+
+      <Route path="*" element={<NotFound />} />
+
     </Routes>
   );
 }

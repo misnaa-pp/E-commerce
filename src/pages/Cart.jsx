@@ -9,7 +9,7 @@ import getImageUrl from "../utils/imageUrl";
 
 function Cart() {
   const dispatch = useDispatch();
-  const { items: cartItems, loading } = useSelector((state) => state.cart);
+  const { items: cartItems } = useSelector((state) => state.cart);
 
   useEffect(() => {
     dispatch(fetchCart());

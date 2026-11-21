@@ -50,19 +50,6 @@ export const deleteProduct = createAsyncThunk(
   }
 );
 
-
-const initialState = {
-  products: [],
-  selectedProduct: null,
-  loading: false,
-  error: null,
-  pageNumber: 1,
-  pageSize: 8,
-  totalCount: 0,
-  totalPages: 0
-};
-
-
 const productSlice = createSlice({
   name: "products",
   initialState: {

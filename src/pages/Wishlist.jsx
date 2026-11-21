@@ -1,12 +1,13 @@
 import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { fetchWishlist, removeFromWishlist } from "../redux/slices/wishlistSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
-import { addToCart } from "../redux/slices/cartSlice";
 
 function Wishlist() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(fetchWishlist());
@@ -44,29 +45,13 @@ function Wishlist() {
 
 
   
-const handleAddToCart = async (product) => {
-    if (Number(product.stock) <= 0) {
-        toast.error("Sorry, this product is out of stock.");
-        return;
-    }
+const handleAddToCart = (product) => {
+  if (Number(product.stock) <= 0) {
+    toast.error("Sorry, this product is out of stock.");
+    return;
+  }
 
-    try {
-        await dispatch(
-            addToCart({
-                ...product,
-                quantity: 1
-            })
-        ).unwrap();
-
-        toast.success("Product added to cart!");
-
-    } catch (error) {
-        toast.error(
-            typeof error === "string"
-                ? error
-                : "Failed to add product to cart"
-        );
-    }
+  navigate(`/wishlist/choose-size/${product.id}`);
 };
 
 

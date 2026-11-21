@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
     getAdminProducts,
     deleteAdminProduct
@@ -20,7 +20,7 @@ function AdminProducts() {
 
     const productsPerPage = 8;
 
-    const loadProducts = async () => {
+    const loadProducts = useCallback(async () => {
         try {
             setLoading(true);
             setError("");
@@ -41,11 +41,11 @@ function AdminProducts() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [currentPage, searchTerm]);
 
     useEffect(() => {
         loadProducts();
-    }, [currentPage, searchTerm]);
+    }, [loadProducts]);
 
     const handleDelete = async (id) => {
         const confirmed = window.confirm(

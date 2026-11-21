@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
     getAdminOrders,
     getAdminOrderDetails,
@@ -24,7 +24,7 @@ const AdminOrders = () => {
 
     const pageSize = 10;
 
-    const fetchOrders = async () => {
+    const fetchOrders = useCallback(async () => {
         try {
             setLoading(true);
             setError("");
@@ -46,11 +46,11 @@ const AdminOrders = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [pageNumber, search, status]);
 
     useEffect(() => {
         fetchOrders();
-    }, [pageNumber, search, status]);
+    }, [fetchOrders]);
 
     const handleStatusSelection = (orderId, newStatus) => {
         setSelectedStatuses(prev => ({
@@ -150,7 +150,7 @@ const AdminOrders = () => {
                 Order Management
             </h1>
 
-            
+
             <div className="flex flex-col md:flex-row gap-4 mb-6">
 
                 <input
@@ -182,7 +182,7 @@ const AdminOrders = () => {
 
             </div>
 
-            
+
             {loading ? (
                 <p className="text-center py-10">Loading orders...</p>
             ) : error ? (
@@ -305,7 +305,7 @@ const AdminOrders = () => {
                 </div>
             )}
 
-            
+
             {!loading && totalPages > 1 && (
                 <div className="flex justify-center items-center gap-4 mt-6">
 
@@ -332,7 +332,7 @@ const AdminOrders = () => {
                 </div>
             )}
 
-            
+
             {(detailsLoading || selectedOrder) && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
 
@@ -357,7 +357,7 @@ const AdminOrders = () => {
                                     </button>
                                 </div>
 
-                                
+
                                 <h3 className="font-semibold mb-2">
                                     Customer Information
                                 </h3>
@@ -368,7 +368,7 @@ const AdminOrders = () => {
                                     <p><strong>Phone:</strong> {selectedOrder.phone}</p>
                                 </div>
 
-                                
+
                                 <h3 className="font-semibold mb-2">
                                     Shipping Address
                                 </h3>
@@ -382,7 +382,7 @@ const AdminOrders = () => {
                                     <p>{selectedOrder.country}</p>
                                 </div>
 
-                               
+
                                 <h3 className="font-semibold mb-2">
                                     Payment Information
                                 </h3>
@@ -393,7 +393,7 @@ const AdminOrders = () => {
                                     <p><strong>Order Status:</strong> {selectedOrder.orderStatus}</p>
                                 </div>
 
-                                
+
                                 <h3 className="font-semibold mb-3">
                                     Ordered Products
                                 </h3>
@@ -428,7 +428,7 @@ const AdminOrders = () => {
                                     ))}
                                 </div>
 
-                                
+
                                 <div className="border-t pt-4 space-y-2">
                                     <p className="flex justify-between">
                                         Subtotal

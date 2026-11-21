@@ -2,7 +2,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
-import { addToCart } from "../redux/slices/cartSlice";
 import {addToWishlist,removeFromWishlist,} from "../redux/slices/wishlistSlice";
 import getImageUrl from "../utils/imageUrl";
 
@@ -12,16 +11,8 @@ function ProductCard({ product }) {
   const wishlistItems = useSelector(
     (state) => state.wishlist.items
   );
-
-  const cartItems = useSelector(
-    (state) => state.cart.items
-  );
-
+  
   const isWishlisted = wishlistItems.some(
-    (item) => item.id === product.id
-  );
-
-  const cartItem = cartItems.find(
     (item) => item.id === product.id
   );
 
@@ -34,38 +25,6 @@ function ProductCard({ product }) {
     product.images?.[0] ||
     product.image ||
     product.images;
-
-  
-const handleAddToCart = async () => {
-    if (stock <= 0) {
-        toast.error("This product is out of stock");
-        return;
-    }
-
-    if (cartItem && cartItem.quantity >= stock) {
-        toast.error(`Only ${stock} item(s) available`);
-        return;
-    }
-
-    try {
-        await dispatch(
-            addToCart({
-                ...product,
-                quantity: 1
-            })
-        ).unwrap();
-
-        toast.success(`${productName} added to cart`);
-
-    } catch (error) {
-        toast.error(
-            typeof error === "string"
-                ? error
-                : "Failed to add product to cart"
-        );
-    }
-};
-
 
   
 const handleWishlist = async () => {

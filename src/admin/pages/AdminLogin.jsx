@@ -8,14 +8,8 @@ function AdminLogin() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const {
-    loading,
-    error,
-    isAuthenticated,
-  } = useSelector(
-    (state) => state.admin
-  );
-
+  const { error, loading } = useSelector((state) => state.admin);
+  
   const [formData, setFormData] = useState({
     email: "",
     password: "",

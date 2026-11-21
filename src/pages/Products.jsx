@@ -35,8 +35,6 @@ function Products() {
     return matchesCategory && matchesSearch;
   });
 
-  const visibleProducts = filteredProducts.slice(0, visibleCount);
-
   useEffect(() => {
     setVisibleCount(8);
   }, [categoryFromUrl]);

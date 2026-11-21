@@ -49,7 +49,7 @@ function OrderDetails({ order, orderNumber, onClose, }) {
           <div className="space-y-4">
 
             {order.items?.map(
-              (item, index) => (
+             (item) => (
 
                 <div
                   key={item.id}

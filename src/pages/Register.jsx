@@ -15,7 +15,7 @@ function Register() {
     confirmPassword: "",
   });
 
-  const [error, setError] = useState("");
+  const [error] = useState("");
 
   const handleChange = (e) => {
     setFormData({
